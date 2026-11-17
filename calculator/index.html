@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Can this robot run from the cloud? A remote policy inference calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root { --ink:#16181D; --body:#2B2E35; --muted:#5F6368; --line:#D9DCE1; --soft:#F4F6F9; --accent:#1F5BD8; --good:#13795B; --bad:#B42318; --warn:#9A6700; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:'IBM Plex Sans', system-ui, sans-serif; color:var(--ink); background:#fff; }
+  main { max-width: 1080px; margin: 0 auto; padding: 40px 24px 64px; }
+  header { border-bottom:1px solid var(--line); padding-bottom:16px; margin-bottom:24px; }
+  .eyebrow { font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+  h1 { font-family:'IBM Plex Sans Condensed', sans-serif; font-weight:600; font-size:32px; margin:6px 0 8px; }
+  .lead { color:var(--body); font-size:15px; line-height:1.55; max-width: 760px; margin:0; }
+  .grid { display:grid; grid-template-columns: 360px 1fr; gap:28px; align-items:start; }
+  @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+  fieldset { border:1px solid var(--line); border-radius:8px; padding:14px 16px 16px; margin:0 0 16px; }
+  legend { font-weight:600; font-size:13px; padding:0 6px; }
+  label { display:block; font-size:12.5px; color:var(--muted); margin:10px 0 4px; }
+  input, select { width:100%; font:inherit; font-size:14px; padding:7px 9px; border:1px solid var(--line); border-radius:6px; color:var(--ink); background:#fff; }
+  input:focus, select:focus { outline:2px solid #C9D7F7; border-color:var(--accent); }
+  .row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .hint { font-size:11.5px; color:var(--muted); margin-top:4px; line-height:1.4; }
+  .cards { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:14px; }
+  @media (max-width: 560px) { .cards { grid-template-columns: 1fr; } }
+  .card { border:1px solid var(--line); border-radius:8px; padding:14px 16px; }
+  .card h3 { margin:0 0 8px; font-size:13px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; }
+  .big { font-family:'IBM Plex Sans Condensed', sans-serif; font-size:30px; font-weight:600; line-height:1.1; }
+  .sub { font-size:13px; color:var(--body); line-height:1.5; margin-top:6px; }
+  .good { color:var(--good); } .bad { color:var(--bad); } .warn { color:var(--warn); }
+  .wide { grid-column: 1 / -1; }
+  .bar { position:relative; height:26px; background:var(--soft); border-radius:4px; margin-top:10px; overflow:hidden; }
+  .seg { position:absolute; top:0; height:100%; }
+  .budget { position:absolute; top:-4px; bottom:-4px; width:2px; background:var(--ink); }
+  .legend { display:flex; gap:14px; flex-wrap:wrap; font-size:12px; color:var(--muted); margin-top:8px; }
+  .dot { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:-1px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; margin-top:6px; }
+  td, th { text-align:left; padding:6px 8px 6px 0; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { color:var(--muted); font-weight:500; font-size:12px; }
+  .mono { font-family:'IBM Plex Mono', monospace; font-size:12.5px; }
+  details { margin-top:28px; border-top:1px solid var(--line); padding-top:14px; }
+  summary { cursor:pointer; font-weight:600; font-size:14px; }
+  .sources li { font-size:12.5px; color:var(--body); line-height:1.6; }
+  a { color:var(--accent); }
+  footer { margin-top:28px; font-size:12px; color:var(--muted); }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="eyebrow">Remote policy inference · built on Reactor's published numbers</div>
+  <h1>Can this robot run from the cloud?</h1>
+  <p class="lead">Pick a hosted policy, describe the fleet and the task, and see three things: whether the task's latency budget survives a round trip to the cloud, what the fleet would pay, and how full a GPU server has to be before the price covers the GPUs. Every default comes from a public source listed at the bottom. Change anything.</p>
+</header>
+
+<div class="grid">
+<section>
+  <fieldset>
+    <legend>Policy and tier</legend>
+    <label for="policy">Hosted policy</label>
+    <select id="policy"></select>
+    <div class="row2">
+      <div><label for="price">Price, $ per session-minute</label><input id="price" type="number" step="0.001" min="0"></div>
+      <div><label for="p99">Model p99 latency, ms</label><input id="p99" type="number" step="1" min="0"></div>
+    </div>
+    <label for="perServer">Robots served per server at that p99</label>
+    <input id="perServer" type="number" step="1" min="1">
+    <div class="hint" id="policyNote"></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Task</legend>
+    <label for="task">Task type</label>
+    <select id="task"></select>
+    <div class="row2">
+      <div><label for="budget">Latency budget, ms</label><input id="budget" type="number" step="1" min="0"></div>
+      <div><label for="rtt">Network round trip, ms</label><input id="rtt" type="number" step="1" min="0" value="30"></div>
+    </div>
+    <div class="hint">Budgets are the delay before a task loses 25% of its score in Reactor's DreamZero simulation sweep. The 30 ms round trip is Reactor's stated global RTT.</div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Fleet</legend>
+    <div class="row2">
+      <div><label for="robots">Robots</label><input id="robots" type="number" min="1" value="20"></div>
+      <div><label for="hours">Hours per day</label><input id="hours" type="number" min="1" max="24" value="16"></div>
+    </div>
+    <label for="days">Days per month</label>
+    <input id="days" type="number" min="1" max="31" value="26">
+  </fieldset>
+
+  <fieldset>
+    <legend>GPU cost behind the API</legend>
+    <label for="gpuRate">B200 rent, $ per GPU-hour</label>
+    <select id="gpuPreset">
+      <option value="5.09">Neocloud mean, Q2 2026 ($5.09)</option>
+      <option value="8.19" selected>Median on-demand, Nov 2026 ($8.19)</option>
+      <option value="14.24">AWS on-demand list ($14.24)</option>
+    </select>
+    <input id="gpuRate" type="number" step="0.01" min="0" value="8.19" style="margin-top:6px">
+    <label for="gpus">GPUs per server</label>
+    <input id="gpus" type="number" min="1" value="2">
+    <div class="hint">Reactor serves Praxis-1 on two B200s. Its real GPU cost is private; these are public market rates.</div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Onboard check</legend>
+    <label for="gbPerCall">Weights read per call, GB</label>
+    <input id="gbPerCall" type="number" step="1" min="0" value="88">
+    <div class="hint">88 GB is Reactor's figure for Praxis-1's mixture-of-experts layers per call.</div>
+  </fieldset>
+</section>
+
+<section>
+  <div class="cards">
+    <div class="card wide">
+      <h3>1 · Does the task survive the round trip?</h3>
+      <div class="big" id="latVerdict">–</div>
+      <div class="bar" id="latBar"></div>
+      <div class="legend">
+        <span><span class="dot" style="background:#8FA9E8"></span>Network round trip</span>
+        <span><span class="dot" style="background:var(--accent)"></span>Model p99</span>
+        <span><span class="dot" style="background:var(--ink)"></span>Task budget</span>
+      </div>
+      <div class="sub" id="latSub"></div>
+    </div>
+
+    <div class="card">
+      <h3>2 · What the fleet pays</h3>
+      <div class="big" id="perRobotHour">–</div>
+      <div class="sub" id="billSub"></div>
+    </div>
+
+    <div class="card">
+      <h3>3 · GPU cost per robot-hour</h3>
+      <div class="big" id="gpuPerRobot">–</div>
+      <div class="sub" id="gpuSub"></div>
+    </div>
+
+    <div class="card wide">
+      <h3>4 · How full a server has to be</h3>
+      <div class="big" id="breakeven">–</div>
+      <div class="sub" id="beSub"></div>
+      <table id="fillTable"></table>
+    </div>
+
+    <div class="card wide">
+      <h3>5 · Why not run it on the robot?</h3>
+      <div class="big" id="onboard">–</div>
+      <div class="sub" id="onboardSub"></div>
+    </div>
+  </div>
+
+  <details>
+    <summary>Sources and assumptions</summary>
+    <ul class="sources">
+      <li>Prices per session-minute (Praxis-1 $0.030, Cosmos Nano $0.102, FLUX Action $0.102, DreamZero $0.204) and the note that Robotics is in beta: <a href="https://docs.reactor.inc/robotics/overview">Reactor robotics docs</a>.</li>
+      <li>Praxis-1 on two B200s: 62 ms average for one robot; sixteen robots under a 250 ms p99; standard tier p99 under 270 ms; ~88 GB of expert weights read per call; a robot calls about every 1.6 s: <a href="https://www.reactor.inc/blog/praxis-1">Reactor, "Praxis-1 in 62 ms"</a>.</li>
+      <li>DreamZero served latency (median ~243 ms, p95 ~260 ms on two B200s) and task latency budgets (stacking ~147 ms, sorting ~152 ms, bowl into bin ~187 ms, insertion ~479 ms, single pick-and-place ~924 ms; simulated Franka): <a href="https://www.reactor.inc/blog/dreamzero">Reactor, "Optimizing DreamZero"</a>.</li>
+      <li>"&lt;30 ms global rtt": <a href="https://x.com/reactorworld">Reactor Remote Policy API launch post, Nov 6, 2026</a>.</li>
+      <li>B200 rents: median on-demand $8.19 per GPU-hour across 23 providers as of Nov 9, 2026 (<a href="https://getdeploying.com/reference/cloud-gpu/nvidia-b200">getdeploying</a>); neocloud mean ~$5.09 in Q2 2026 and AWS list $14.24 (<a href="https://tech-insider.org/nvidia-b200-residual-value-158-percent-2026/">tech-insider</a>).</li>
+      <li>Memory bandwidth: B200 ~8 TB/s (the figure Reactor uses); Jetson AGX Thor 273 GB/s (<a href="https://www.tweaktown.com/news/106933/nvidias-new-jetson-agx-thor-dev-kit-pre-orders-now-open-3499-looks-like-geforce-rtx-fe-card/index.html">TweakTown</a>).</li>
+      <li>Assumptions: robots are billed only while a session is open; GPUs are held only during shift hours; robots-per-server for policies other than Praxis-1 are not published, so the default of 1 is a placeholder; the onboard figure is a lower bound from memory bandwidth alone, not a benchmark.</li>
+    </ul>
+  </details>
+  <footer>Built by Abdullah Usman as an outside exercise. Not affiliated with Reactor; all figures are public or labeled as estimates.</footer>
+</section>
+</div>
+</main>
+
+<script>
+const POLICIES = [
+  { id:"praxis-std", name:"Praxis-1 (Runway), shared standard tier", price:0.030, p99:270, perServer:16,
+    note:"Reactor's published price and its 16-robot, 250 ms p99 serving result on two B200s. 270 ms is the standard-tier p99 it commits to." },
+  { id:"praxis-fast", name:"Praxis-1 Fast, dedicated (one robot per server)", price:0.030, p99:62, perServer:1,
+    note:"Reactor reports under 62 ms p99 for Praxis-1-Fast, one robot on two B200s. Fast access is by request and its price is not published, so $0.030 is a placeholder: watch card 4." },
+  { id:"dreamzero", name:"DreamZero (NVIDIA)", price:0.204, p99:260, perServer:1,
+    note:"Price from Reactor's docs; ~260 ms is its p95 on two B200s. Robots per server not published (placeholder 1)." },
+  { id:"cosmos", name:"Cosmos Nano Policy (NVIDIA)", price:0.102, p99:250, perServer:1,
+    note:"Price from Reactor's docs. Latency and robots per server not published; edit both." },
+  { id:"flux", name:"FLUX Action (Black Forest Labs)", price:0.102, p99:250, perServer:1,
+    note:"Price from Reactor's docs. Latency and robots per server not published; edit both." },
+  { id:"custom", name:"Your own policy (Reactor Serve, private beta)", price:0.050, p99:150, perServer:4,
+    note:"All values are yours to set." }
+];
+const TASKS = [
+  { id:"pnp", name:"Single pick-and-place", budget:924 },
+  { id:"insert", name:"Insertion", budget:479 },
+  { id:"bowl", name:"Bowl into bin", budget:187 },
+  { id:"sort", name:"Sorting", budget:152 },
+  { id:"stack", name:"Stacking", budget:147 },
+  { id:"custom", name:"Custom budget", budget:300 }
+];
+const $ = id => document.getElementById(id);
+const fmt$ = (v, d=2) => "$" + v.toLocaleString(undefined, {minimumFractionDigits:d, maximumFractionDigits:d});
+const fmt0 = v => Math.round(v).toLocaleString();
+
+POLICIES.forEach(p => $("policy").add(new Option(p.name, p.id)));
+TASKS.forEach(t => $("task").add(new Option(`${t.name} (~${t.budget} ms)`, t.id)));
+
+function loadPolicy() {
+  const p = POLICIES.find(x => x.id === $("policy").value);
+  $("price").value = p.price; $("p99").value = p.p99; $("perServer").value = p.perServer;
+  $("policyNote").textContent = p.note;
+  render();
+}
+function loadTask() {
+  const t = TASKS.find(x => x.id === $("task").value);
+  $("budget").value = t.budget; render();
+}
+$("policy").addEventListener("change", loadPolicy);
+$("task").addEventListener("change", loadTask);
+$("gpuPreset").addEventListener("change", () => { $("gpuRate").value = $("gpuPreset").value; render(); });
+document.querySelectorAll("input").forEach(el => el.addEventListener("input", render));
+
+function num(id) { const v = parseFloat($(id).value); return isNaN(v) ? 0 : v; }
+
+function render() {
+  const price = num("price"), p99 = num("p99"), perServer = Math.max(1, Math.round(num("perServer")));
+  const budget = num("budget"), rtt = num("rtt");
+  const robots = Math.max(1, Math.round(num("robots"))), hours = num("hours"), days = num("days");
+  const gpuRate = num("gpuRate"), gpus = Math.max(1, Math.round(num("gpus"))), gb = num("gbPerCall");
+
+  // 1. latency
+  const total = rtt + p99, slack = budget - total;
+  const ok = slack >= 0;
+  $("latVerdict").innerHTML = ok
+    ? `<span class="good">Fits, with ${fmt0(slack)} ms to spare</span>`
+    : `<span class="bad">Over budget by ${fmt0(-slack)} ms</span>`;
+  const scale = Math.max(total, budget) * 1.1 || 1;
+  $("latBar").innerHTML =
+    `<div class="seg" style="left:0;width:${100*rtt/scale}%;background:#8FA9E8"></div>` +
+    `<div class="seg" style="left:${100*rtt/scale}%;width:${100*p99/scale}%;background:var(--accent)"></div>` +
+    `<div class="budget" style="left:${100*budget/scale}%"></div>`;
+  $("latSub").textContent = `${fmt0(rtt)} ms network + ${fmt0(p99)} ms model p99 = ${fmt0(total)} ms against a ${fmt0(budget)} ms budget. ` +
+    (ok ? "The robot keeps executing its current action chunk while the next one is computed, so the budget is what matters, not the call time alone."
+        : "Try the dedicated tier, a closer region, or a task with more slack.");
+
+  // 2. bill
+  const perHour = price * 60;
+  const monthly = perHour * robots * hours * days;
+  $("perRobotHour").textContent = fmt$(perHour) + " / robot-hour";
+  $("billSub").textContent = `${robots} robots × ${hours} h × ${days} days = ${fmt$(monthly, 0)} per month, or ${fmt$(perHour*hours*days, 0)} per robot.`;
+
+  // 3. GPU cost
+  const serverHour = gpuRate * gpus;
+  const gpuPerRobot = serverHour / perServer;
+  const margin = perHour > 0 ? 1 - gpuPerRobot / perHour : -Infinity;
+  $("gpuPerRobot").innerHTML = fmt$(gpuPerRobot) + " <span style='font-size:16px;color:var(--muted)'>at a full server</span>";
+  $("gpuSub").innerHTML = `${gpus} GPUs × ${fmt$(gpuRate)} = ${fmt$(serverHour)} per server-hour, shared by ${perServer} robot${perServer>1?"s":""}. ` +
+    `Gross margin on GPU rent at full load: <b class="${margin>=0.4?'good':margin>=0?'warn':'bad'}">${isFinite(margin)? Math.round(100*margin)+"%" : "n/a"}</b>.`;
+
+  // 4. break-even fill
+  const be = perHour > 0 ? serverHour / perHour : Infinity;
+  if (be <= perServer) {
+    $("breakeven").innerHTML = `<span class="${be/perServer <= 0.6 ? 'good':'warn'}">${be.toFixed(1)} of ${perServer} slots</span>`;
+    $("beSub").textContent = `At ${fmt$(perHour)} per robot-hour, a server covers its GPU rent once about ${Math.ceil(be)} robots are on it at the same time. Below that, the shift loses money on GPUs alone.`;
+  } else {
+    const need = serverHour / perServer / 60;
+    $("breakeven").innerHTML = `<span class="bad">Never at this price</span>`;
+    $("beSub").textContent = `Even a full server (${perServer} robot${perServer>1?"s":""}) brings in ${fmt$(perHour*perServer)} per hour against ${fmt$(serverHour)} of GPU rent. Break-even needs about ${fmt$(need, 3)} per session-minute (${fmt$(need*60)} per robot-hour).`;
+  }
+  const fills = [...new Set([1, 2, 4, 8, 12, perServer].filter(n => n <= perServer))].sort((a,b)=>a-b);
+  $("fillTable").innerHTML = "<tr><th>Robots on the server</th><th>Revenue / server-hour</th><th>GPU rent / server-hour</th><th>Gross margin</th></tr>" +
+    fills.map(n => { const rev = n*perHour, m = rev>0 ? 1 - serverHour/rev : -Infinity;
+      return `<tr><td>${n}</td><td class="mono">${fmt$(rev)}</td><td class="mono">${fmt$(serverHour)}</td><td class="mono ${m>=0?'good':'bad'}">${isFinite(m)? Math.round(100*m)+'%':'n/a'}</td></tr>`; }).join("");
+
+  // 5. onboard
+  const b200 = gb / 8000 * 1000, thor = gb / 273 * 1000;
+  $("onboard").innerHTML = gb > 0 ? `${fmt0(thor)} ms <span style="font-size:16px;color:var(--muted)">floor on Jetson Thor vs ${b200.toFixed(0)} ms on a B200</span>` : "–";
+  $("onboardSub").textContent = gb > 0
+    ? `Just reading ${gb} GB of weights takes at least ${fmt0(thor)} ms at Thor's 273 GB/s, before any math, versus ${b200.toFixed(1)} ms at ~8 TB/s. ${thor + 0 > budget ? "That alone exceeds this task's budget, so a model this size has to run off the robot." : "This model could fit the task's budget onboard on bandwidth alone; the cloud case rests on cost sharing and updates instead."}`
+    : "Enter the weights read per call.";
+}
+loadPolicy(); loadTask();
+</script>
+</body>
+</html>
