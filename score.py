@@ -67,7 +67,7 @@ def write_outputs(ranked, counts):
     out = ROOT / "out"
     out.mkdir(exist_ok=True)
     cols = ["rank", "score", "account", "segment", "metro", "first_call",
-            "first_call_title", "contact_status", "why_now"] + \
+            "first_call_title", "contact_email", "email_status", "contact_status", "why_now"] + \
            [f"s_{k}" for k in SIGNALS + ["density"]] + ["evidence_1", "evidence_2"]
     with open(out / "ranked.csv", "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=cols, extrasaction="ignore")
