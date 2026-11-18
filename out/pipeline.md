@@ -2,53 +2,53 @@
 
 Metros by number of targets: Bay Area (27), Austin (5), Boston (4), Pittsburgh (1), San Antonio (1), Paris (1), Seattle (1), New York (1), Chicago (1), Los Angeles (1), Des Moines (1).
 
-| # | Score | Account | Segment | Metro | First call | Why now |
-|---|---|---|---|---|---|---|
-| 1 | 85 | Tutor Intelligence | Operator | Boston | Alon Kosowsky, Co-founder & CTO | Every robot is already connected to AWS (Reactor's preferred cloud); target of 1,000+ robots under contract by end of 2027 |
-| 2 | 85 | XDOF | Data fleet | Bay Area | David Tse, President | $70M raise (Jun 17, 2026); its ABC-130K dataset was recorded on YAM arms, the rig Praxis-1 already serves |
-| 3 | 76 | Skild AI | Model maker | Pittsburgh | Deepak Pathak, Co-founder & CEO | $100M+ ARR, 60+ paying customers (Sep 2026); capacity partner or competitor, worth knowing which |
-| 4 | 74 | Dyna Robotics | Operator | Bay Area | Lindon Gao, Co-founder & CEO | Din Tai Fung network rollout after crossing ROI (Aug 2026); one unified model runs at every site with no site-specific engineering |
-| 5 | 72 | I2RT Robotics | Channel | Bay Area | Chino Chen, Regional Sales Director | Every YAM rig sold can call a hosted policy with zero integration |
-| 6 | 70 | Deploy | Operator | Bay Area | Sahith Reddy Chada, Co-founder | YC F26 launch (Oct 2026); recruiting 3PLs for pilots priced per station per month |
-| 7 | 69 | Avatar Robotics | Operator | Bay Area | Colin Webb, Founder & CEO | $6.5M seed led by AlleyCorp (Aug 7, 2026); 900K+ products processed, a warehouse customer is past pilot and expanding |
-| 8 | 69 | Contoro Robotics | Operator | Austin | Youngmok Yun, CEO & Founder | $12M Series A from Amazon fund, Doosan, Coupang; pay-per-container model |
-| 9 | 67 | Plus One Robotics | Operator | San Antonio | Shaun Edwards, CTO | Already routes every hard pick off the robot to a remote human; testing an AI in that seat |
-| 10 | 67 | PrismaX | Data fleet | n/a | Chyna Qu, Co-founder | Published that a Python buffer added hundreds of ms to its pi0.5 rollouts (230 to 87 ms fix), which Everett reshared |
-| 11 | 65 | Ambi Robotics | Operator | Bay Area | Jeff Mahler, Co-founder & CTO | Licensing its model to other robot makers (Feb 2026); 250K+ production hours; Vedant interviewed Jeff on Scaling Robotics (Ep 14) |
-| 12 | 65 | Foundry Robotics | Operator | Bay Area | Meghna Gummadi, Head of Robotics | $100M Series A (Oct 2026) to expand the factory; acquired Avea Robotics for remote control; Vedant interviewed CEO Adarsh Kulkarni (Ep 16) |
-| 13 | 65 | Hugging Face (LeRobot) | Channel | Paris | Pepijn Kooijmans, LeRobot Lead | The default open stack already splits robot and policy server; a hosted endpoint is one config line |
-| 14 | 65 | TerraFirma | Operator | Austin | Noah McGuinness, Co-founder & CTO | $115M raise led by Kleiner Perkins (Jul 2026); every machine is already driven over the network from a control center, the off-robot path Reactor sells into. Earthworks, not manipulation, so the pitch is hosting its own autonomy models rather than Praxis-1 |
-| 15 | 63 | Aktoria Robotics | Data fleet | Bay Area | Shreenabh Agrawal, Co-founder | YC S26; reports ~130 ms operator-to-robot latency from India to San Francisco (Nov 4, 2026) |
-| 16 | 63 | Cobot | Operator | Bay Area | Brad Porter, Founder & CEO | Gen 2 adds bimanual option and a real-time world model of the site (Jun 2026) |
-| 17 | 61 | Chef Robotics | Operator | Bay Area | Luis Rayas, CTO | 100M+ servings in production; every deployment feeds its model |
-| 18 | 61 | Medra | Operator | Bay Area | Michelle Lee, Founder & CEO | $52M Series A (Dec 2025); 38,000 sq ft autonomous lab built in under 90 days (Apr 2026) |
-| 19 | 61 | Miru | Channel | Bay Area | Vedant Nair, Co-founder & COO | Its customers are the fleets Reactor wants; a Reactor endpoint could ship as a Miru-managed config |
-| 20 | 59 | Walden Robotics | Model maker | Boston | Russ Tedrake, Co-founder & CEO | $300M at $1.1B from Toyota, Nvidia, Boeing (Jul 15, 2026); robots already working in a Toyota plant |
-| 21 | 57 | Ai2 (MolmoAct 2) | Model maker | Seattle | Ranjay Krishna, Research lead, computer vision (MolmoAct) | 400K+ downloads since May 5; base model takes ~450 ms per action call, so faster hosting changes what it can do |
-| 22 | 57 | Feather Robotics | Channel | Bay Area | Hoa Mai, Co-founder & CEO | $7.6M pre-seed and launch (Sep 24, 2026); ships with no model of its own, so each unit needs a policy from somewhere |
-| 23 | 57 | Robotics Center of Silicon Valley | Channel | Bay Area | Jerry Huang, Founder | Every eval it runs needs a policy served somewhere |
-| 24 | 57 | Sunday Robotics | Operator | Bay Area | Cheng Chi, Co-founder & CTO | Founding Family beta of about 50 homes in late 2026 |
-| 25 | 57 | Weave Robotics | Operator | Bay Area | Kaan Dogrusoz, CEO & Co-founder | 2,000+ hours of folding logged; Isaac 1 deliveries start fall 2026; runs Physical Intelligence models today |
-| 26 | 56 | Mind Robotics | Operator | Bay Area | Daniel Burrows, Head of Data Platform | $500M Series A; "large number" of robots in Rivian plants by end of 2026 |
-| 27 | 56 | Nimble Robotics | Operator | Bay Area | Siva Mynepalli, Head of Computer Vision | FedEx-led $106M Series C at $1B; scaling FedEx Fulfillment |
-| 28 | 56 | OS3 | Operator | Bay Area | Rishabh Chanana, Co-founder | YC S26; HALE 1.0 deploying in a hotel laundry room (Sep 2026), shipments planned for fall 2026 |
-| 29 | 54 | Generalist AI | Model maker | n/a | Pete Florence, Co-founder & CEO | $400M raise (Jun 2026); GEN-1.5 one-shot learning |
-| 30 | 54 | Genesis AI | Model maker | Bay Area | Zhou Xian, Founder & CEO | First customer deployments with manufacturers, logistics, labs |
-| 31 | 54 | Pickle Robot | Operator | Boston | Ariana Eisenstein, CTO | UPS buying ~400 robots for ~$120M, rollout from late 2026 into 2027 |
-| 32 | 54 | TorqueAGI | Model maker | Bay Area | Ashutosh Saxena, Founder & CEO | Supplies its model to robot and machine makers instead of building robots; worked with Dexterity, NVIDIA partner, John Deere 2026 program |
-| 33 | 54 | Trossen Robotics | Channel | n/a | Matt Trossen, CTO & Founder | Kits used by Google DeepMind, Stanford and Hugging Face; remote-server workflow already documented |
-| 34 | 50 | Dexterity | Operator | Bay Area | Nirmal Sharma, VP of Software Platform, Robotics | FedEx moved Hagerstown from pilot to production (Jul 30, 2026) |
-| 35 | 50 | Formic | Operator | Chicago | Saman Farid, Founder & CEO | $50M (Oct 2026) to move from palletizing into general-purpose robots across 100+ factories; Oakland factory opened Aug 2026 |
-| 36 | 50 | GrayMatter Robotics | Operator | Los Angeles | Brual Shah, Co-founder & CTO | AI cells that scan, self-program and sand or polish new parts; AFWERX Phase II contract (Jan 2026) |
-| 37 | 50 | Reflex Robotics | Operator | New York | Mason Massie, Co-Founder & CTO | GXO RaaS pilot; teleop-to-autonomy path needs a hosted policy at the handoff |
-| 38 | 48 | Argon Mechatronics | Operator | Austin | Lainey Corliss, Founder & CEO | Live deployments in Texas factories and pharma labs; precision work needs the dedicated tier, and no public sign yet of large models or off-robot inference. Local to Austin |
-| 39 | 48 | Diligent Robotics | Operator | Austin | Andrea Thomaz, Founder & CEO | Moxi 2.0 rollout began (Aug 2026), up to 18 hours of runtime per robot per day |
-| 40 | 48 | OSARO | Operator | Bay Area | Michael Kahane, CTO | SightWorks update (Oct 2026); SOC 2 Type II done (Aug 2026) |
-| 41 | 46 | Hello Robot | Channel | n/a | Aaron Edsinger, CEO & Co-founder | Labs bring their own policy; a hosted endpoint ships with every unit |
-| 42 | 44 | Encord | Channel | Bay Area | James Falconer, Global Director of Business Development | $60M Series C (Feb 2026); 300+ AI teams as customers, a referral channel |
-| 43 | 44 | Familiar Machines & Magic | Operator | Boston | Ira Renfrew, Co-founder, Chief People & Product Officer | Companion robot with on-device AI, sales start in 1-2 years; pitch post-training and hosting heavier models off the robot |
-| 44 | 44 | Rhoda AI | Model maker | Bay Area | Alexander Bergman, CDO & VP Software, Founding Team | $450M Series A (Mar 2026); expanding industrial pilots |
-| 45 | 43 | Roboflow | Channel | Des Moines | Joseph Nelson, Co-founder & CEO | Partnered with Standard Bots (Jun 2026) to put Roboflow vision models into robot skills; perception upstream of Reactor policies. POSSIBLE COMPETITOR: Roboflow already sells hosted inference (1B+ per week), so check with Reactor leadership before outreach |
-| 46 | 43 | The Bot Company | Operator | Bay Area | Kyle Vogt, Founder & CEO | Long shot: no shipped units, and it has said it rejects in-home teleop |
-| 47 | 41 | Armstrong Robotics | Operator | Bay Area | Axel Hansen, Co-founder & CEO | Robots run 24 hours a day at one of the largest US full-service chains; $12M raised (Oct 2025) |
-| 48 | 24 | Apptronik | Operator | Austin | Nicholas Paine, CTO | Robot Park in Austin opened Jun 2026; low fit while Gemini On-Device is the stack |
+| Rank | Score | Account | First call | Title | Segment | Metro | Why now |
+|---|---|---|---|---|---|---|---|
+| 1 | 85 | Tutor Intelligence | Alon Kosowsky | Co-founder & CTO | Operator | Boston | Every robot is already connected to AWS (Reactor's preferred cloud); target of 1,000+ robots under contract by end of 2027 |
+| 1 | 85 | XDOF | David Tse | President | Data fleet | Bay Area | $70M raise (Jun 17, 2026); its ABC-130K dataset was recorded on YAM arms, the rig Praxis-1 already serves |
+| 3 | 76 | Skild AI | Deepak Pathak | Co-founder & CEO | Model maker | Pittsburgh | $100M+ ARR, 60+ paying customers (Sep 2026); capacity partner or competitor, worth knowing which |
+| 4 | 74 | Dyna Robotics | Lindon Gao | Co-founder & CEO | Operator | Bay Area | Din Tai Fung network rollout after crossing ROI (Aug 2026); one unified model runs at every site with no site-specific engineering |
+| 5 | 72 | I2RT Robotics | Chino Chen | Regional Sales Director | Channel | Bay Area | Every YAM rig sold can call a hosted policy with zero integration |
+| 6 | 70 | Deploy | Sahith Reddy Chada | Co-founder | Operator | Bay Area | YC F26 launch (Oct 2026); recruiting 3PLs for pilots priced per station per month |
+| 7 | 69 | Avatar Robotics | Colin Webb | Founder & CEO | Operator | Bay Area | $6.5M seed led by AlleyCorp (Aug 7, 2026); 900K+ products processed, a warehouse customer is past pilot and expanding |
+| 7 | 69 | Contoro Robotics | Youngmok Yun | CEO & Founder | Operator | Austin | $12M Series A from Amazon fund, Doosan, Coupang; pay-per-container model |
+| 9 | 67 | Plus One Robotics | Shaun Edwards | CTO | Operator | San Antonio | Already routes every hard pick off the robot to a remote human; testing an AI in that seat |
+| 9 | 67 | PrismaX | Chyna Qu | Co-founder | Data fleet | n/a | Published that a Python buffer added hundreds of ms to its pi0.5 rollouts (230 to 87 ms fix), which Everett reshared |
+| 11 | 65 | Foundry Robotics | Meghna Gummadi | Head of Robotics | Operator | Bay Area | $100M Series A (Oct 2026) to expand the factory; acquired Avea Robotics for remote control; Vedant interviewed CEO Adarsh Kulkarni (Ep 16) |
+| 11 | 65 | Hugging Face (LeRobot) | Pepijn Kooijmans | LeRobot Lead | Channel | Paris | The default open stack already splits robot and policy server; a hosted endpoint is one config line |
+| 11 | 65 | Ambi Robotics | Jeff Mahler | Co-founder & CTO | Operator | Bay Area | Licensing its model to other robot makers (Feb 2026); 250K+ production hours; Vedant interviewed Jeff on Scaling Robotics (Ep 14) |
+| 11 | 65 | TerraFirma | Noah McGuinness | Co-founder & CTO | Operator | Austin | $115M raise led by Kleiner Perkins (Jul 2026); every machine is already driven over the network from a control center, the off-robot path Reactor sells into. Earthworks, not manipulation, so the pitch is hosting its own autonomy models rather than Praxis-1 |
+| 15 | 63 | Aktoria Robotics | Shreenabh Agrawal | Co-founder | Data fleet | Bay Area | YC S26; reports ~130 ms operator-to-robot latency from India to San Francisco (Nov 4, 2026) |
+| 15 | 63 | Cobot | Brad Porter | Founder & CEO | Operator | Bay Area | Gen 2 adds bimanual option and a real-time world model of the site (Jun 2026) |
+| 17 | 61 | Chef Robotics | Luis Rayas | CTO | Operator | Bay Area | 100M+ servings in production; every deployment feeds its model |
+| 17 | 61 | Medra | Michelle Lee | Founder & CEO | Operator | Bay Area | $52M Series A (Dec 2025); 38,000 sq ft autonomous lab built in under 90 days (Apr 2026) |
+| 17 | 61 | Miru | Vedant Nair | Co-founder & COO | Channel | Bay Area | Its customers are the fleets Reactor wants; a Reactor endpoint could ship as a Miru-managed config |
+| 20 | 59 | Walden Robotics | Russ Tedrake | Co-founder & CEO | Model maker | Boston | $300M at $1.1B from Toyota, Nvidia, Boeing (Jul 15, 2026); robots already working in a Toyota plant |
+| 21 | 57 | Ai2 (MolmoAct 2) | Ranjay Krishna | Research lead, computer vision (MolmoAct) | Model maker | Seattle | 400K+ downloads since May 5; base model takes ~450 ms per action call, so faster hosting changes what it can do |
+| 21 | 57 | Feather Robotics | Hoa Mai | Co-founder & CEO | Channel | Bay Area | $7.6M pre-seed and launch (Sep 24, 2026); ships with no model of its own, so each unit needs a policy from somewhere |
+| 21 | 57 | Robotics Center of Silicon Valley | Jerry Huang | Founder | Channel | Bay Area | Every eval it runs needs a policy served somewhere |
+| 21 | 57 | Sunday Robotics | Cheng Chi | Co-founder & CTO | Operator | Bay Area | Founding Family beta of about 50 homes in late 2026 |
+| 21 | 57 | Weave Robotics | Kaan Dogrusoz | CEO & Co-founder | Operator | Bay Area | 2,000+ hours of folding logged; Isaac 1 deliveries start fall 2026; runs Physical Intelligence models today |
+| 26 | 56 | Mind Robotics | Daniel Burrows | Head of Data Platform | Operator | Bay Area | $500M Series A; "large number" of robots in Rivian plants by end of 2026 |
+| 26 | 56 | Nimble Robotics | Siva Mynepalli | Head of Computer Vision | Operator | Bay Area | FedEx-led $106M Series C at $1B; scaling FedEx Fulfillment |
+| 26 | 56 | OS3 | Rishabh Chanana | Co-founder | Operator | Bay Area | YC S26; HALE 1.0 deploying in a hotel laundry room (Sep 2026), shipments planned for fall 2026 |
+| 29 | 54 | Trossen Robotics | Matt Trossen | CTO & Founder | Channel | n/a | Kits used by Google DeepMind, Stanford and Hugging Face; remote-server workflow already documented |
+| 29 | 54 | Pickle Robot | Ariana Eisenstein | CTO | Operator | Boston | UPS buying ~400 robots for ~$120M, rollout from late 2026 into 2027 |
+| 29 | 54 | TorqueAGI | Ashutosh Saxena | Founder & CEO | Model maker | Bay Area | Supplies its model to robot and machine makers instead of building robots; worked with Dexterity, NVIDIA partner, John Deere 2026 program |
+| 29 | 54 | Genesis AI | Zhou Xian | Founder & CEO | Model maker | Bay Area | First customer deployments with manufacturers, logistics, labs |
+| 29 | 54 | Generalist AI | Pete Florence | Co-founder & CEO | Model maker | n/a | $400M raise (Jun 2026); GEN-1.5 one-shot learning |
+| 34 | 50 | Dexterity | Nirmal Sharma | VP of Software Platform, Robotics | Operator | Bay Area | FedEx moved Hagerstown from pilot to production (Jul 30, 2026) |
+| 34 | 50 | Reflex Robotics | Mason Massie | Co-Founder & CTO | Operator | New York | GXO RaaS pilot; teleop-to-autonomy path needs a hosted policy at the handoff |
+| 34 | 50 | Formic | Saman Farid | Founder & CEO | Operator | Chicago | $50M (Oct 2026) to move from palletizing into general-purpose robots across 100+ factories; Oakland factory opened Aug 2026 |
+| 34 | 50 | GrayMatter Robotics | Brual Shah | Co-founder & CTO | Operator | Los Angeles | AI cells that scan, self-program and sand or polish new parts; AFWERX Phase II contract (Jan 2026) |
+| 38 | 48 | OSARO | Michael Kahane | CTO | Operator | Bay Area | SightWorks update (Oct 2026); SOC 2 Type II done (Aug 2026) |
+| 38 | 48 | Argon Mechatronics | Lainey Corliss | Founder & CEO | Operator | Austin | Live deployments in Texas factories and pharma labs; precision work needs the dedicated tier, and no public sign yet of large models or off-robot inference. Local to Austin |
+| 38 | 48 | Diligent Robotics | Andrea Thomaz | Founder & CEO | Operator | Austin | Moxi 2.0 rollout began (Aug 2026), up to 18 hours of runtime per robot per day |
+| 41 | 46 | Hello Robot | Aaron Edsinger | CEO & Co-founder | Channel | n/a | Labs bring their own policy; a hosted endpoint ships with every unit |
+| 42 | 44 | Encord | James Falconer | Global Director of Business Development | Channel | Bay Area | $60M Series C (Feb 2026); 300+ AI teams as customers, a referral channel |
+| 42 | 44 | Rhoda AI | Alexander Bergman | CDO & VP Software, Founding Team | Model maker | Bay Area | $450M Series A (Mar 2026); expanding industrial pilots |
+| 42 | 44 | Familiar Machines & Magic | Ira Renfrew | Co-founder, Chief People & Product Officer | Operator | Boston | Companion robot with on-device AI, sales start in 1-2 years; pitch post-training and hosting heavier models off the robot |
+| 45 | 43 | The Bot Company | Kyle Vogt | Founder & CEO | Operator | Bay Area | Long shot: no shipped units, and it has said it rejects in-home teleop |
+| 45 | 43 | Roboflow | Joseph Nelson | Co-founder & CEO | Channel | Des Moines | Partnered with Standard Bots (Jun 2026) to put Roboflow vision models into robot skills; perception upstream of Reactor policies. POSSIBLE COMPETITOR: Roboflow already sells hosted inference (1B+ per week), so check with Reactor leadership before outreach |
+| 47 | 41 | Armstrong Robotics | Axel Hansen | Co-founder & CEO | Operator | Bay Area | Robots run 24 hours a day at one of the largest US full-service chains; $12M raised (Oct 2025) |
+| 48 | 24 | Apptronik | Nicholas Paine | CTO | Operator | Austin | Robot Park in Austin opened Jun 2026; low fit while Gemini On-Device is the stack |

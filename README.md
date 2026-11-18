@@ -9,7 +9,7 @@ It has three parts:
 | Part | What it does |
 |---|---|
 | [`calculator/`](calculator/index.html) | "Can this robot run from the cloud?" Pick a hosted policy, a task and a fleet. It checks the task's latency budget against the network round trip plus the model's p99, prices the fleet per robot-hour, and shows how full a GPU server has to be before the price covers the GPUs. |
-| [`data/accounts.csv`](data/accounts.csv) | Forty-eight net-new robotics accounts, none already partnered with Reactor (operators, model makers, channels, data fleets), each with the signals used for scoring, a suggested first call, the first call's work email and two public sources. |
+| [`data/accounts.csv`](data/accounts.csv) | Forty-eight net-new robotics accounts, none already partnered with Reactor (operators, model makers, channels, data fleets), in the same columns as the lead sheet: first call, title, connection notes, work email, segment, metro, why now, the 0 to 3 scoring signals and two public sources. |
 | [`score.py`](score.py) | Scores and ranks the accounts, then writes `out/ranked.csv` and `out/pipeline.md`. Change the weights from the command line to disagree with them. |
 
 ## The idea behind it
@@ -54,6 +54,6 @@ Each signal is a 0 to 3 judgment recorded in the CSV next to its sources:
 - Reactor's real GPU costs, regions and margins are private. The calculator uses market rents, so treat its margins as directional.
 - Robots-per-server is published only for Praxis-1. Other policies default to a placeholder of 1; edit it.
 - The onboard comparison is a memory-bandwidth floor (weights read per call divided by bandwidth), not a benchmark.
-- Contacts come from LinkedIn and Apollo search results. Work emails come from Apollo enrichment (work emails only, no personal addresses), with Apollo's `email_status` recorded next to each; all 40 were marked verified by Apollo on Nov 18, 2026, and the Ai2 contact's address is his University of Washington one. No profiles were scraped and no one has been contacted.
+- Contacts come from LinkedIn and Apollo search results. Work emails come from Apollo enrichment (work emails only, no personal addresses), all marked verified by Apollo on Nov 18, 2026, and the Ai2 contact's address is his University of Washington one. No profiles were scraped and no one has been contacted.
 
 Built by Abdullah Usman, November 2026. Not affiliated with Reactor.

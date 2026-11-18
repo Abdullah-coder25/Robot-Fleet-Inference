@@ -34,43 +34,54 @@ DEFAULT_WEIGHTS = {
     "lockin": -1.5,       # policy served through another provider's API
 }
 
-SIGNALS = ["offboard", "model_match", "latency_fit", "robot_hours", "warmth", "lockin"]
+# Column names match the lead sheet exactly.
+INPUT_COLS = ["Account", "First call", "Title", "Connection Notes", "Email", "Segment", "Metro",
+              "Why now", "Offboard", "Model match", "Latency fit", "Robot-hours", "Warmth",
+              "Lock-in", "Source 1", "Source 2"]
+OUTPUT_COLS = ["Rank", "Score", "Account", "First call", "Title", "Connection Notes", "Email",
+               "Segment", "Metro", "Why now", "Offboard", "Model match", "Latency fit",
+               "Robot-hours", "Metro density", "Warmth", "Lock-in", "Source 1", "Source 2"]
+SIGNAL_COLS = {"offboard": "Offboard", "model_match": "Model match", "latency_fit": "Latency fit",
+               "robot_hours": "Robot-hours", "density": "Metro density", "warmth": "Warmth",
+               "lockin": "Lock-in"}
+
+
+def known(metro):
+    return bool(metro) and metro != "n/a"
 
 
 def density_scores(rows):
     """3 if 5+ targets share the metro, 2 if 2-4, 1 if alone, 0 if unknown."""
-    counts = Counter(r["metro"] for r in rows if r["metro"])
-    out = {}
-    for r in rows:
-        n = counts.get(r["metro"], 0)
-        out[r["account"]] = 0 if not r["metro"] else 3 if n >= 5 else 2 if n >= 2 else 1
-    return out, counts
+    counts = Counter(r["Metro"] for r in rows if known(r["Metro"]))
+    return [0 if not known(r["Metro"]) else 3 if counts[r["Metro"]] >= 5
+            else 2 if counts[r["Metro"]] >= 2 else 1 for r in rows], counts
+
+
+def round_half_up(x):
+    return int(math.floor(x + 0.5))
 
 
 def score(rows, weights):
     dens, counts = density_scores(rows)
     max_score = sum(3 * w for w in weights.values() if w > 0)
     ranked = []
-    for r in rows:
-        s = {k: int(r[k]) for k in SIGNALS}
-        s["density"] = dens[r["account"]]
-        raw = sum(weights[k] * s[k] for k in weights)
-        ranked.append({**r, **{f"s_{k}": v for k, v in s.items()},
-                       "score": round(100 * max(raw, 0) / max_score)})
-    ranked.sort(key=lambda x: (-x["score"], x["account"]))
-    for i, r in enumerate(ranked, 1):
-        r["rank"] = i
+    for r, d in zip(rows, dens):
+        r = dict(r)
+        r["Metro density"] = d
+        raw = sum(weights[k] * float(r[col]) for k, col in SIGNAL_COLS.items())
+        r["Score"] = round_half_up(100 * raw / max_score)
+        ranked.append(r)
+    ranked.sort(key=lambda x: -x["Score"])  # stable: ties keep the input order
+    for r in ranked:  # ties share a rank, like the sheet's RANK()
+        r["Rank"] = 1 + sum(1 for o in ranked if o["Score"] > r["Score"])
     return ranked, counts
 
 
 def write_outputs(ranked, counts):
     out = ROOT / "out"
     out.mkdir(exist_ok=True)
-    cols = ["rank", "score", "account", "segment", "metro", "first_call",
-            "first_call_title", "connection_notes", "contact_email", "email_status", "contact_status", "why_now"] + \
-           [f"s_{k}" for k in SIGNALS + ["density"]] + ["evidence_1", "evidence_2"]
     with open(out / "ranked.csv", "w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=cols, extrasaction="ignore")
+        w = csv.DictWriter(f, fieldnames=OUTPUT_COLS, extrasaction="ignore")
         w.writeheader()
         w.writerows(ranked)
 
@@ -78,12 +89,11 @@ def write_outputs(ranked, counts):
     lines.append("Metros by number of targets: " + ", ".join(
         f"{m} ({n})" for m, n in counts.most_common()) + ".")
     lines.append("")
-    lines.append("| # | Score | Account | Segment | Metro | First call | Why now |")
-    lines.append("|---|---|---|---|---|---|---|")
+    lines.append("| Rank | Score | Account | First call | Title | Segment | Metro | Why now |")
+    lines.append("|---|---|---|---|---|---|---|---|")
     for r in ranked:
-        who = f"{r['first_call']}, {r['first_call_title']}" if r["first_call"] else "(open)"
-        lines.append(f"| {r['rank']} | {r['score']} | {r['account']} | {r['segment']} | "
-                     f"{r['metro'] or 'n/a'} | {who} | {r['why_now']} |")
+        lines.append(f"| {r['Rank']} | {r['Score']} | {r['Account']} | {r['First call']} | "
+                     f"{r['Title']} | {r['Segment']} | {r['Metro']} | {r['Why now']} |")
     (out / "pipeline.md").write_text("\n".join(lines) + "\n")
 
 
@@ -103,9 +113,9 @@ def main():
         rows = list(csv.DictReader(f))
     ranked, counts = score(rows, weights)
     write_outputs(ranked, counts)
-    width = max(len(r["account"]) for r in ranked)
+    width = max(len(r["Account"]) for r in ranked)
     for r in ranked:
-        print(f"{r['rank']:>2}  {r['score']:>3}  {r['account']:<{width}}  {r['metro'] or 'n/a'}")
+        print(f"{r['Rank']:>2}  {r['Score']:>3}  {r['Account']:<{width}}  {r['Metro']}")
 
 
 if __name__ == "__main__":
