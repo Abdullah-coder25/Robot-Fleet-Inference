@@ -260,8 +260,9 @@ function render() {
     $("beSub").textContent = `At ${fmt$(perHour)} per robot-hour, a server covers its GPU rent once about ${Math.ceil(be)} robots are on it at the same time. Below that, the shift loses money on GPUs alone.`;
   } else {
     const need = serverHour / perServer / 60;
-    $("breakeven").innerHTML = `<span class="bad">Never at this price</span>`;
-    $("beSub").textContent = `Even a full server (${perServer} robot${perServer>1?"s":""}) brings in ${fmt$(perHour*perServer)} per hour against ${fmt$(serverHour)} of GPU rent. Break-even needs about ${fmt$(need, 3)} per session-minute (${fmt$(need*60)} per robot-hour).`;
+    const need40 = need / 0.6;
+    $("breakeven").innerHTML = `<span class="warn">Price at ${fmt$(need*60)}+ / robot-hour</span>`;
+    $("beSub").textContent = `At ${fmt$(perHour)} per robot-hour, a full server (${perServer} robot${perServer>1?"s":""}) brings in ${fmt$(perHour*perServer)} per hour against ${fmt$(serverHour)} of GPU rent. That can still make sense for a strategic or first-in-metro deal. To cover GPU rent at this setup, price at about ${fmt$(need, 3)} per session-minute (${fmt$(need*60)} per robot-hour); a 40% gross margin needs about ${fmt$(need40*60)} per robot-hour. Fitting more robots on each server lowers both.`;
   }
   const fills = [...new Set([1, 2, 4, 8, 12, perServer].filter(n => n <= perServer))].sort((a,b)=>a-b);
   $("fillTable").innerHTML = "<tr><th>Robots on the server</th><th>Revenue / server-hour</th><th>GPU rent / server-hour</th><th>Gross margin</th></tr>" +
