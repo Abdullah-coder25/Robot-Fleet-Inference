@@ -145,6 +145,7 @@
       <div class="big" id="breakeven">–</div>
       <div class="sub" id="beSub"></div>
       <table id="fillTable"></table>
+      <div class="hint" id="fillNote" style="margin-top:8px"></div>
     </div>
 
     <div class="card wide">
@@ -269,10 +270,16 @@ function render() {
     $("breakeven").innerHTML = `<span class="warn">Price at ${fmt$(need*60)}+ / robot-hour</span>`;
     $("beSub").textContent = `At ${fmt$(perHour)} per robot-hour, a full server (${perServer} robot${perServer>1?"s":""}) brings in ${fmt$(perHour*perServer)} per hour against ${fmt$(serverHour)} of GPU rent. That can still make sense for a strategic or first-in-metro deal. To cover GPU rent at this setup, price at about ${fmt$(need, 3)} per session-minute (${fmt$(need*60)} per robot-hour); a 40% gross margin needs about ${fmt$(need40*60)} per robot-hour. Fitting more robots on each server lowers both.`;
   }
-  const fills = [...new Set([1, 2, 4, 8, 12, perServer].filter(n => n <= perServer))].sort((a,b)=>a-b);
+  const maxFill = Math.max(16, perServer);
+  const fills = [...new Set([1, 2, 3, 4, 6, 8, 10, 12, 14, 16, perServer].filter(n => n <= maxFill))].sort((a,b)=>a-b);
   $("fillTable").innerHTML = "<tr><th>Robots on the server</th><th>Revenue / server-hour</th><th>GPU rent / server-hour</th><th>Gross margin</th></tr>" +
     fills.map(n => { const rev = n*perHour, m = rev>0 ? 1 - serverHour/rev : -Infinity;
-      return `<tr><td>${n}</td><td class="mono">${fmt$(rev)}</td><td class="mono">${fmt$(serverHour)}</td><td class="mono ${m>=0?'good':'bad'}">${isFinite(m)? Math.round(100*m)+'%':'n/a'}</td></tr>`; }).join("");
+      const mark = n === perServer ? ' <span style="color:var(--muted);font-size:12px">(assumed above)</span>' : (n > perServer ? ' <span style="color:var(--muted);font-size:12px">*</span>' : '');
+      const style = n === perServer ? ' style="font-weight:600"' : '';
+      return `<tr${style}><td>${n}${mark}</td><td class="mono">${fmt$(rev)}</td><td class="mono">${fmt$(serverHour)}</td><td class="mono ${m>=0?'good':'bad'}">${isFinite(m)? Math.round(100*m)+'%':'n/a'}</td></tr>`; }).join("");
+  $("fillNote").textContent = perServer < maxFill
+    ? "* Rows past the assumed robots per server show the economics if the model could serve that many robots at the same latency. Reactor has published that only for Praxis-1 (16 robots under a 250 ms p99)."
+    : "";
 
   // 5. onboard
   const b200 = gb / 8000 * 1000, thor = gb / 273 * 1000;
