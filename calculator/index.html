@@ -46,6 +46,7 @@
   .sources li { font-size:12.5px; color:var(--body); line-height:1.6; }
   a { color:var(--accent); }
   footer { margin-top:28px; font-size:12px; color:var(--muted); }
+  .fillrow { cursor:pointer; } .fillrow:hover td { background:#F3F6FD; }
 </style>
 </head>
 <body>
@@ -145,7 +146,8 @@
       <div class="big" id="breakeven">–</div>
       <div class="sub" id="beSub"></div>
       <table id="fillTable"></table>
-      <div class="hint" id="fillNote" style="margin-top:8px"></div>
+      <div class="hint" style="margin-top:8px">Click a row to set robots per server.</div>
+      <div class="hint" id="fillNote" style="margin-top:4px"></div>
     </div>
 
     <div class="card wide">
@@ -276,7 +278,8 @@ function render() {
     fills.map(n => { const rev = n*perHour, m = rev>0 ? 1 - serverHour/rev : -Infinity;
       const mark = n === perServer ? ' <span style="color:var(--muted);font-size:12px">(assumed above)</span>' : (n > perServer ? ' <span style="color:var(--muted);font-size:12px">*</span>' : '');
       const style = n === perServer ? ' style="font-weight:600"' : '';
-      return `<tr${style}><td>${n}${mark}</td><td class="mono">${fmt$(rev)}</td><td class="mono">${fmt$(serverHour)}</td><td class="mono ${m>=0?'good':'bad'}">${isFinite(m)? Math.round(100*m)+'%':'n/a'}</td></tr>`; }).join("");
+      return `<tr${style} data-n="${n}" class="fillrow" title="Click to assume ${n} robots per server"><td>${n}${mark}</td><td class="mono">${fmt$(rev)}</td><td class="mono">${fmt$(serverHour)}</td><td class="mono ${m>=0?'good':'bad'}">${isFinite(m)? Math.round(100*m)+'%':'n/a'}</td></tr>`; }).join("");
+  document.querySelectorAll("#fillTable .fillrow").forEach(tr => tr.addEventListener("click", () => { $("perServer").value = tr.dataset.n; render(); }));
   $("fillNote").textContent = perServer < maxFill
     ? "* Rows past the assumed robots per server show the economics if the model could serve that many robots at the same latency. Reactor has published that only for Praxis-1 (16 robots under a 250 ms p99)."
     : "";
