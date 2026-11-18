@@ -186,8 +186,8 @@ const POLICIES = [
     note:"Price from Reactor's docs. Latency and weight size are not published; 250 ms is a placeholder, so edit it. Robots per server is not published either: the default is the minimum Reactor's price implies at the GPU rent shown (enough robots for the price to cover the server)." },
   { id:"flux", name:"FLUX Action (Black Forest Labs)", price:0.102, p99:250, perServer:"derive", gb:null, est:"latency",
     note:"Price from Reactor's docs. Latency and weight size are not published; 250 ms is a placeholder, so edit it. Robots per server is not published either: the default is the minimum Reactor's price implies at the GPU rent shown (enough robots for the price to cover the server)." },
-  { id:"custom", name:"Your own policy (Reactor Serve, private beta)", price:0.050, p99:150, perServer:4, gb:null, est:"every value",
-    note:"Reactor Serve pricing is not published. Every value here is a placeholder for you to set." }
+  { id:"custom", name:"Your own policy (Reactor Serve, private beta)", price:0.050, p99:150, perServer:"derive", gb:null, est:"every value",
+    note:"Reactor Serve pricing is not published. Every value here is a placeholder for you to set; robots per server defaults to the minimum that price would need to cover the server." }
 ];
 const TASKS = [
   { id:"pnp", name:"Single pick-and-place", budget:924 },
@@ -206,22 +206,29 @@ TASKS.forEach(t => $("task").add(new Option(`${t.name} (~${t.budget} ms)`, t.id)
 
 function loadPolicy() {
   const p = POLICIES.find(x => x.id === $("policy").value);
-  $("price").value = p.price; $("p99").value = p.p99; $("perServer").value = p.perServer === "derive"
-    ? Math.max(1, Math.ceil((parseFloat($("gpuRate").value)||0) * (parseFloat($("gpus").value)||0) / (p.price * 60)))
-    : p.perServer;
+  $("price").value = p.price; $("p99").value = p.p99;
+  window.AUTO_PS = p.perServer === "derive";
+  $("perServer").value = window.AUTO_PS ? derivedPerServer() : p.perServer;
   $("gbPerCall").value = p.gb == null ? "" : p.gb;
   $("gbHint").textContent = p.gb == null ? "Not published for this model; enter a size to run the check." : "88 GB is Reactor's figure for the expert weights Praxis-1 reads per call (29 layers x 3.02 GB), not the full model size.";
   window.CUR_EST = p.est;
   $("policyNote").textContent = p.note;
   render();
 }
+function derivedPerServer() {
+  const price = parseFloat($("price").value) || 0, rate = parseFloat($("gpuRate").value) || 0, g = Math.max(1, Math.round(parseFloat($("gpus").value) || 1));
+  return price > 0 ? Math.max(1, Math.ceil(rate * g / (price * 60))) : 1;
+}
+function rederive() { if (window.AUTO_PS) $("perServer").value = derivedPerServer(); }
 function loadTask() {
   const t = TASKS.find(x => x.id === $("task").value);
   $("budget").value = t.budget; render();
 }
 $("policy").addEventListener("change", loadPolicy);
 $("task").addEventListener("change", loadTask);
-$("gpuPreset").addEventListener("change", () => { $("gpuRate").value = $("gpuPreset").value; render(); });
+$("gpuPreset").addEventListener("change", () => { $("gpuRate").value = $("gpuPreset").value; rederive(); render(); });
+["gpuRate","gpus","price"].forEach(id => $(id).addEventListener("input", rederive));
+$("perServer").addEventListener("input", () => { window.AUTO_PS = false; });
 document.querySelectorAll("input").forEach(el => el.addEventListener("input", render));
 
 function num(id) { const v = parseFloat($(id).value); return isNaN(v) ? 0 : v; }
@@ -236,7 +243,7 @@ function render() {
   const total = rtt + p99, slack = budget - total;
   const ok = slack >= 0;
   $("latVerdict").innerHTML = ok
-    ? `<span class="good">Fits, with ${fmt0(slack)} ms to spare</span>`
+    ? (slack < 25 ? `<span class="warn">Just fits, with ${fmt0(slack)} ms to spare</span>` : `<span class="good">Fits, with ${fmt0(slack)} ms to spare</span>`)
     : `<span class="bad">Over budget by ${fmt0(-slack)} ms</span>`;
   const scale = Math.max(total, budget) * 1.1 || 1;
   $("latBar").innerHTML =
@@ -279,7 +286,7 @@ function render() {
       const mark = n === perServer ? ' <span style="color:var(--muted);font-size:12px">(assumed above)</span>' : (n > perServer ? ' <span style="color:var(--muted);font-size:12px">*</span>' : '');
       const style = n === perServer ? ' style="font-weight:600"' : '';
       return `<tr${style} data-n="${n}" class="fillrow" title="Click to assume ${n} robots per server"><td>${n}${mark}</td><td class="mono">${fmt$(rev)}</td><td class="mono">${fmt$(serverHour)}</td><td class="mono ${m>=0?'good':'bad'}">${isFinite(m)? Math.round(100*m)+'%':'n/a'}</td></tr>`; }).join("");
-  document.querySelectorAll("#fillTable .fillrow").forEach(tr => tr.addEventListener("click", () => { $("perServer").value = tr.dataset.n; render(); }));
+  document.querySelectorAll("#fillTable .fillrow").forEach(tr => tr.addEventListener("click", () => { window.AUTO_PS = false; $("perServer").value = tr.dataset.n; render(); }));
   $("fillNote").textContent = perServer < maxFill
     ? "* Rows past the assumed robots per server show the economics if the model could serve that many robots at the same latency. Reactor has published that only for Praxis-1 (16 robots under a 250 ms p99)."
     : "";
