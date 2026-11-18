@@ -96,11 +96,11 @@
     <legend>GPU cost behind the API</legend>
     <label for="gpuRate">B200 rent, $ per GPU-hour</label>
     <select id="gpuPreset">
-      <option value="5.09">Neocloud mean, Q2 2026 ($5.09)</option>
-      <option value="8.19" selected>Median on-demand, Nov 2026 ($8.19)</option>
+      <option value="5.62">Lowest verified in-stock on-demand, Nov 2026 ($5.62)</option>
+      <option value="7.99" selected>Median on-demand, Nov 17, 2026 ($7.99)</option>
       <option value="14.24">AWS on-demand list ($14.24)</option>
     </select>
-    <input id="gpuRate" type="number" step="0.01" min="0" value="8.19" style="margin-top:6px">
+    <input id="gpuRate" type="number" step="0.01" min="0" value="7.99" style="margin-top:6px">
     <label for="gpus">GPUs per server</label>
     <input id="gpus" type="number" min="1" value="2">
     <div class="hint">Reactor serves Praxis-1 on two B200s. Its real GPU cost is private; these are public market rates.</div>
@@ -110,7 +110,7 @@
     <legend>Onboard check</legend>
     <label for="gbPerCall">Weights read per call, GB</label>
     <input id="gbPerCall" type="number" step="1" min="0" value="88">
-    <div class="hint">88 GB is Reactor's figure for Praxis-1's mixture-of-experts layers per call.</div>
+    <div class="hint" id="gbHint"></div>
   </fieldset>
 </section>
 
@@ -157,13 +157,13 @@
   <details>
     <summary>Sources and assumptions</summary>
     <ul class="sources">
-      <li>Prices per session-minute (Praxis-1 $0.030, Cosmos Nano $0.102, FLUX Action $0.102, DreamZero $0.204) and the note that Robotics is in beta: <a href="https://docs.reactor.inc/robotics/overview">Reactor robotics docs</a>.</li>
-      <li>Praxis-1 on two B200s: 62 ms average for one robot; sixteen robots under a 250 ms p99; standard tier p99 under 270 ms; ~88 GB of expert weights read per call; a robot calls about every 1.6 s: <a href="https://www.reactor.inc/blog/praxis-1">Reactor, "Praxis-1 in 62 ms"</a>.</li>
-      <li>DreamZero served latency (median ~243 ms, p95 ~260 ms on two B200s) and task latency budgets (stacking ~147 ms, sorting ~152 ms, bowl into bin ~187 ms, insertion ~479 ms, single pick-and-place ~924 ms; simulated Franka): <a href="https://www.reactor.inc/blog/dreamzero">Reactor, "Optimizing DreamZero"</a>.</li>
+      <li>Prices per minute of session time, metered per second (Praxis-1 $0.030, Cosmos Nano $0.102, FLUX Action $0.102, DreamZero $0.204), and "Robotics is in beta": <a href="https://docs.reactor.inc/robotics/overview">Reactor robotics docs</a>.</li>
+      <li>Praxis-1 (27B) on two B200s: 62 ms per call for one robot (p99 64 ms); sixteen robots under a 250 ms p99; standard offering p99 under 270 ms; factory-tier target of an answer within 100 ms; about 88 GB of expert weights read per call (29 layers x 3.02 GB); a robot calls about every 1.6 s: <a href="https://www.reactor.inc/blog/praxis-1">Reactor, "Praxis-1"</a>.</li>
+      <li>DreamZero on two B200s: about 243 ms median and 262 ms p95 after optimization. Task budgets are the delay at which a task loses a quarter of its no-delay score: single pick-and-place 924 ms, insertion 479 ms, bowl into bin 187 ms, multi-object sorting 152 ms, stacking 147 ms (simulated DROID Franka in RoboLab at 15 Hz; budgets interpolated between delay steps 67 ms apart): <a href="https://www.reactor.inc/blog/dreamzero">Reactor, "Optimizing DreamZero"</a>.</li>
       <li>"&lt;30 ms global rtt": <a href="https://x.com/reactorworld">Reactor Remote Policy API launch post, Nov 6, 2026</a>.</li>
-      <li>B200 rents: median on-demand $8.19 per GPU-hour across 23 providers as of Nov 9, 2026 (<a href="https://getdeploying.com/reference/cloud-gpu/nvidia-b200">getdeploying</a>); neocloud mean ~$5.09 in Q2 2026 and AWS list $14.24 (<a href="https://tech-insider.org/nvidia-b200-residual-value-158-percent-2026/">tech-insider</a>).</li>
-      <li>Memory bandwidth: B200 ~8 TB/s (the figure Reactor uses); Jetson AGX Thor 273 GB/s (<a href="https://www.tweaktown.com/news/106933/nvidias-new-jetson-agx-thor-dev-kit-pre-orders-now-open-3499-looks-like-geforce-rtx-fe-card/index.html">TweakTown</a>).</li>
-      <li>Assumptions: robots are billed only while a session is open; GPUs are held only during shift hours; robots-per-server for policies other than Praxis-1 are not published, so the default of 1 is a placeholder; the onboard figure is a lower bound from memory bandwidth alone, not a benchmark.</li>
+      <li>B200 rents: median on-demand $7.99 per GPU-hour across 27 providers as of Nov 17, 2026; lowest verified in-stock on-demand $5.62; AWS on-demand $14.24 (8x B200 p6-b200.48xlarge): <a href="https://getdeploying.com/reference/cloud-gpu/nvidia-b200">getdeploying</a>.</li>
+      <li>Memory bandwidth: B200 up to 8 TB/s (NVIDIA spec); Jetson AGX Thor up to 273 GB/s with 128 GB of memory (<a href="https://www.tweaktown.com/news/106933/nvidias-new-jetson-agx-thor-dev-kit-pre-orders-now-open-3499-looks-like-geforce-rtx-fe-card/index.html">TweakTown</a>).</li>
+      <li><b>Assumptions (mine, not Reactor's):</b> the 30 ms round trip holds wherever the robot is (Reactor states it as an upper bound, and a robot far from a region will see more); the task budgets, measured on one simulated arm running DreamZero, carry over to other models and real robots; the robot keeps executing its current action chunk while the next one is computed, so the budget, not the call time, is the limit; robots are billed only while a session is open; GPUs are rented only during shift hours at public on-demand rates (Reactor's real cost is private and likely lower); every robot on a server is busy at the same time when the table says "full"; robots per server and latency for models other than Praxis-1 are placeholders; the factory-tier price is a placeholder; the onboard figure is a lower bound from memory bandwidth alone, not a benchmark.</li>
     </ul>
   </details>
   <footer>Built by Abdullah Usman as an outside exercise. Not affiliated with Reactor; all figures are public or labeled as estimates.</footer>
@@ -173,18 +173,18 @@
 
 <script>
 const POLICIES = [
-  { id:"praxis-std", name:"Praxis-1 (Runway), shared standard tier", price:0.030, p99:270, perServer:16,
-    note:"Reactor's published price and its 16-robot, 250 ms p99 serving result on two B200s. 270 ms is the standard-tier p99 it commits to." },
-  { id:"praxis-fast", name:"Praxis-1 Fast, dedicated (one robot per server)", price:0.030, p99:62, perServer:1,
-    note:"Reactor reports under 62 ms p99 for Praxis-1-Fast, one robot on two B200s. Fast access is by request and its price is not published, so $0.030 is a placeholder: watch card 4." },
-  { id:"dreamzero", name:"DreamZero (NVIDIA)", price:0.204, p99:260, perServer:1,
-    note:"Price from Reactor's docs; ~260 ms is its p95 on two B200s. Robots per server not published (placeholder 1)." },
-  { id:"cosmos", name:"Cosmos Nano Policy (NVIDIA)", price:0.102, p99:250, perServer:1,
-    note:"Price from Reactor's docs. Latency and robots per server not published; edit both." },
-  { id:"flux", name:"FLUX Action (Black Forest Labs)", price:0.102, p99:250, perServer:1,
-    note:"Price from Reactor's docs. Latency and robots per server not published; edit both." },
-  { id:"custom", name:"Your own policy (Reactor Serve, private beta)", price:0.050, p99:150, perServer:4,
-    note:"All values are yours to set." }
+  { id:"praxis-std", name:"Praxis-1 (Runway), shared standard tier", price:0.030, p99:270, perServer:16, gb:88, est:"",
+    note:"Price from Reactor's docs. Reactor commits to a p99 under 270 ms on the standard tier and reports sixteen robots under a 250 ms p99 on one two-B200 server." },
+  { id:"praxis-fast", name:"Praxis-1 factory tier, dedicated (one robot per server)", price:0.030, p99:64, perServer:1, gb:88, est:"price",
+    note:"Reactor reports 62 ms per call for one robot on two B200s (p99 64 ms) and a factory-tier target of an answer within 100 ms. Its price is not published, so $0.030 (the standard price) is a placeholder: card 4 shows what it would need to charge." },
+  { id:"dreamzero", name:"DreamZero (NVIDIA)", price:0.204, p99:262, perServer:1, gb:null, est:"robots per server",
+    note:"Price from Reactor's docs. Reactor reports about 243 ms median and 262 ms p95 on two B200s; no p99 is published, so the p95 stands in. Robots per server and weight size are not published." },
+  { id:"cosmos", name:"Cosmos Nano Policy (NVIDIA)", price:0.102, p99:250, perServer:1, gb:null, est:"latency and robots per server",
+    note:"Price from Reactor's docs. Latency, robots per server and weight size are not published; 250 ms and 1 robot are placeholders, so edit them." },
+  { id:"flux", name:"FLUX Action (Black Forest Labs)", price:0.102, p99:250, perServer:1, gb:null, est:"latency and robots per server",
+    note:"Price from Reactor's docs. Latency, robots per server and weight size are not published; 250 ms and 1 robot are placeholders, so edit them." },
+  { id:"custom", name:"Your own policy (Reactor Serve, private beta)", price:0.050, p99:150, perServer:4, gb:null, est:"every value",
+    note:"Reactor Serve pricing is not published. Every value here is a placeholder for you to set." }
 ];
 const TASKS = [
   { id:"pnp", name:"Single pick-and-place", budget:924 },
@@ -204,6 +204,9 @@ TASKS.forEach(t => $("task").add(new Option(`${t.name} (~${t.budget} ms)`, t.id)
 function loadPolicy() {
   const p = POLICIES.find(x => x.id === $("policy").value);
   $("price").value = p.price; $("p99").value = p.p99; $("perServer").value = p.perServer;
+  $("gbPerCall").value = p.gb == null ? "" : p.gb;
+  $("gbHint").textContent = p.gb == null ? "Not published for this model; enter a size to run the check." : "88 GB is Reactor's figure for the expert weights Praxis-1 reads per call (29 layers x 3.02 GB), not the full model size.";
+  window.CUR_EST = p.est;
   $("policyNote").textContent = p.note;
   render();
 }
@@ -237,7 +240,7 @@ function render() {
     `<div class="budget" style="left:${100*budget/scale}%"></div>`;
   $("latSub").textContent = `${fmt0(rtt)} ms network + ${fmt0(p99)} ms model p99 = ${fmt0(total)} ms against a ${fmt0(budget)} ms budget. ` +
     (ok ? "The robot keeps executing its current action chunk while the next one is computed, so the budget is what matters, not the call time alone."
-        : "Try the dedicated tier, a closer region, or a task with more slack.");
+        : "Try the dedicated tier, a closer region, or a task with more slack.") + (window.CUR_EST && /latency|every/.test(window.CUR_EST) ? " Note: this model's latency is a placeholder, not a published number." : "");
 
   // 2. bill
   const perHour = price * 60;
@@ -274,7 +277,7 @@ function render() {
   $("onboard").innerHTML = gb > 0 ? `${fmt0(thor)} ms <span style="font-size:16px;color:var(--muted)">floor on Jetson Thor vs ${b200.toFixed(0)} ms on a B200</span>` : "–";
   $("onboardSub").textContent = gb > 0
     ? `Just reading ${gb} GB of weights takes at least ${fmt0(thor)} ms at Thor's 273 GB/s, before any math, versus ${b200.toFixed(1)} ms at ~8 TB/s. ${thor + 0 > budget ? "That alone exceeds this task's budget, so a model this size has to run off the robot." : "This model could fit the task's budget onboard on bandwidth alone; the cloud case rests on cost sharing and updates instead."}`
-    : "Enter the weights read per call.";
+    : "This model's weight size is not published. Enter the GB read per call to compare onboard and cloud.";
 }
 loadPolicy(); loadTask();
 </script>

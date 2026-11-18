@@ -17,8 +17,8 @@ It has three parts:
 Reactor publishes enough to do the unit economics:
 
 - **Price:** Praxis-1 costs $0.030 per session-minute, or $1.80 per robot-hour ([docs](https://docs.reactor.inc/robotics/overview)).
-- **Capacity:** on two B200s, Reactor serves 16 robots under a 250 ms p99, or one robot at 62 ms ([Praxis-1 post](https://www.reactor.inc/blog/praxis-1)).
-- **GPU rent:** B200s rent for a median $8.19 per GPU-hour as of Nov 9, 2026 ([getdeploying](https://getdeploying.com/reference/cloud-gpu/nvidia-b200)).
+- **Capacity:** on two B200s, Reactor serves 16 robots under a 250 ms p99, or one robot at 62 ms per call (p99 64 ms) ([Praxis-1 post](https://www.reactor.inc/blog/praxis-1)).
+- **GPU rent:** B200s rent for a median $7.99 per GPU-hour across 27 providers as of Nov 17, 2026 ([getdeploying](https://getdeploying.com/reference/cloud-gpu/nvidia-b200)).
 
 Put together, a shared server covers its GPU rent only when about 9 of its 16 slots are in use at once. Because Reactor places capacity near each deployment, robots in the same metro can share a server and robots in a new metro cannot. So the pipeline is scored partly on metro density, not only on account size.
 
