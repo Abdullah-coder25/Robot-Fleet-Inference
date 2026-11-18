@@ -41,7 +41,7 @@ Metros by number of targets: Bay Area (27), Austin (5), Boston (4), Seattle (1),
 | 35 | 50 | Formic | Operator | Chicago | Saman Farid, Founder & CEO | $50M (Oct 2026) to scale physical AI; Oakland factory opened Aug 2026; warm path: Vedant Nair interviewed the CEO (Ep 7) |
 | 36 | 50 | GrayMatter Robotics | Operator | Los Angeles | Brual Shah, Co-founder & CTO | AFWERX Phase II contract for aircraft canopy sanding (Jan 2026); warm path: Vedant Nair interviewed the CTO (Ep 15) |
 | 37 | 50 | Reflex Robotics | Operator | New York | Mason Massie, Co-Founder & CTO | GXO RaaS pilot; teleop-to-autonomy path needs a hosted policy at the handoff |
-| 38 | 48 | Argon Mechatronics | Operator | Austin | Zaib Husain, Founder & CEO | Live deployments in Texas factories and pharma labs; precision work needs the dedicated tier, and no public sign yet of large models or off-robot inference. Local to Austin, so an easy in-person meeting |
+| 38 | 48 | Argon Mechatronics | Operator | Austin | Lainey Corliss, Founder & CEO | Live deployments in Texas factories and pharma labs; precision work needs the dedicated tier, and no public sign yet of large models or off-robot inference. Local to Austin, so an easy in-person meeting |
 | 39 | 48 | Diligent Robotics | Operator | Austin | Andrea Thomaz, Founder & CEO | Moxi 2.0 rollout began (Aug 2026), up to 18 hours of runtime per robot per day |
 | 40 | 48 | OSARO | Operator | Bay Area | Michael Kahane, CTO | SightWorks update (Oct 2026); SOC 2 Type II done (Aug 2026) |
 | 41 | 46 | Hello Robot | Channel | n/a | Aaron Edsinger, CEO & Co-founder | Labs bring their own policy; a hosted endpoint ships with every unit |
