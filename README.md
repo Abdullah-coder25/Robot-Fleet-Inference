@@ -2,6 +2,8 @@
 
 A calculator plus 48 scored robotics leads for selling remote policy inference to robot fleets, built from public information about [Reactor](https://www.reactor.inc/robotics)'s Remote Policy API. Each lead has a first-call contact, work email, why-now reason and two sources; the ranked list is in [`out/ranked.csv`](out/ranked.csv).
 
+**Why move now:** Fleets rarely rewire a working policy endpoint, so the next 12 months are a land grab. The calculator answers a robotics team's first question and Reactor's: does this deal fill a server? From day one, I would run GTM on these 48 leads, warm intros first, to land Reactor many robotics customers.
+
 **Live calculator:** https://abdullah-coder25.github.io/Robot-Fleet-Inference/calculator/
 
 It has four parts:
