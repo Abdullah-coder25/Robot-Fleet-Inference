@@ -45,7 +45,7 @@ Each signal is a 0 to 3 judgment recorded in the CSV next to its sources:
 | `latency_fit` | 1.5 | Its core task fits the shared tier's latency |
 | `robot_hours` | 1.5 | Fleet size times hours per day, which is what fills servers |
 | `density` | 1.0 | Computed: how many other targets share its metro |
-| `warmth` | 1.0 | An existing touchpoint (met at an event, already in Reactor's docs or feed) |
+| `warmth` | 1.0 | Relationship strength: 3 = I know the first call personally; 2 = met someone there in person, or a direct VC intro to a founder; 1 = indirect path (mentor's podcast guest, event overlap, reshared by Everett); 0 = cold |
 | `lockin` | -1.5 | Its policy is served through another provider's API today |
 
 ## Honesty notes
