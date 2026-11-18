@@ -4,13 +4,14 @@ A small toolkit for selling remote policy inference to robot fleets, built from 
 
 **Live calculator:** https://abdullah-coder25.github.io/Robot-Fleet-Inference/calculator/
 
-It has three parts:
+It has four parts:
 
 | Part | What it does |
 |---|---|
 | [`calculator/`](calculator/index.html) | "Can this robot run from the cloud?" Pick a hosted policy, a task and a fleet. It checks the task's latency budget against the network round trip plus the model's p99, prices the fleet per robot-hour, and shows how full a GPU server has to be before the price covers the GPUs. |
-| [`data/accounts.csv`](data/accounts.csv) | Forty-eight net-new robotics accounts, none already partnered with Reactor (operators, model makers, channels, data fleets), in the same columns as the lead sheet: first call, title, connection notes, work email, segment, metro, why now, the 0 to 3 scoring signals and two public sources. |
-| [`score.py`](score.py) | Scores and ranks the accounts, then writes `out/ranked.csv` and `out/pipeline.md`. Change the weights from the command line to disagree with them. |
+| [`data/accounts.csv`](data/accounts.csv) | The input: 48 net-new robotics accounts, none already partnered with Reactor (operators, model makers, channels, data fleets). Columns: Account, First call, Title, Connection Notes, Email, Segment, Metro, Why now, the six 0 to 3 signals (Offboard, Model match, Latency fit, Robot-hours, Warmth, Lock-in), Source 1 and Source 2. |
+| [`score.py`](score.py) | Works out Metro density, Score and Rank, then writes the two files in `out/`. Change the weights from the command line to disagree with them. |
+| [`out/`](out/) | The output. [`ranked.csv`](out/ranked.csv) is every account, ranked, with Rank, Score and Metro density added to the input columns. [`pipeline.md`](out/pipeline.md) is a shorter, readable version with the metro counts on top. |
 
 ## The idea behind it
 
@@ -36,23 +37,25 @@ No dependencies beyond the Python standard library. The calculator is one static
 
 ## Scoring
 
-Each signal is a 0 to 3 judgment recorded in the CSV next to its sources:
+Each signal is a 0 to 3 judgment, backed by the two sources in its row:
 
-| Signal | Weight | Meaning |
+| Signal | Weight | What 0 to 3 means |
 |---|---|---|
-| `offboard` | 2.0 | Already runs inference off the robot, or every robot is cloud-connected |
-| `model_match` | 2.0 | Runs a model Reactor hosts, or an open or in-house model it could bring to Serve |
-| `latency_fit` | 1.5 | Its core task fits the shared tier's latency |
-| `robot_hours` | 1.5 | Fleet size times hours per day, which is what fills servers |
-| `density` | 1.0 | Computed: how many other targets share its metro |
-| `warmth` | 1.0 | Relationship strength: 3 = I know the first call personally; 2 = met someone there in person, or a direct VC intro to a founder; 1 = indirect path (mentor's podcast guest, event overlap, reshared by Everett); 0 = cold |
-| `lockin` | -1.5 | Its policy is served through another provider's API today |
+| Offboard | 2.0 | Does it already run policies off the robot? 3 = cloud, teleop or remote humans in the loop today; 0 = everything runs onboard. |
+| Model match | 2.0 | Does it run a model Reactor can host or serve? 3 = an open model or its own large model that needs serving; 0 = locked to on-device. |
+| Latency fit | 1.5 | Does its work fit the shared tier's ~300 ms round trip? 3 = pick-and-place, folding, unloading; 1 = precision work like assembly. |
+| Robot-hours | 1.5 | How much server time it could fill. 3 = a large fleet or long shifts today; 0 = no robots shipping yet. |
+| Metro density | 1.0 | Computed, not entered: 3 = 5 or more targets in the metro; 2 = 2 to 4; 1 = alone; 0 = metro unknown ("n/a"). |
+| Warmth | 1.0 | 3 = I know the first call personally; 2 = met someone there in person, or a direct VC intro to a founder; 1 = indirect path (mentor's podcast guest, event overlap); 0 = cold. |
+| Lock-in | -1.5 | Tied to another lab's model or stack, such as Physical Intelligence or Gemini Robotics. Subtracts. |
+
+Score = 100 x (weighted sum) / 27, the highest possible sum, rounded half up. Ties share a rank (1, 1, 3), and tied accounts keep their order from the input file.
 
 ## Honesty notes
 
-- Everything comes from public pages linked in the CSV and the calculator. Figures I computed are labeled as estimates.
+- Facts about each account come from the public pages linked in its row; Connection Notes and Warmth are my own relationships. Figures I computed are labeled as estimates.
 - Reactor's real GPU costs, regions and margins are private. The calculator uses market rents, so treat its margins as directional.
-- Robots-per-server is published only for Praxis-1. Other policies default to a placeholder of 1; edit it.
+- Robots-per-server is published only for Praxis-1. For the other policies, the calculator starts from the fewest robots per server that would cover the GPU rent at Reactor's price, and marks that as an assumption you can change.
 - The onboard comparison is a memory-bandwidth floor (weights read per call divided by bandwidth), not a benchmark.
 - Contacts come from LinkedIn and Apollo search results. Work emails come from Apollo enrichment (work emails only, no personal addresses), all marked verified by Apollo on Nov 18, 2026, and the Ai2 contact's address is his University of Washington one. No profiles were scraped and no one has been contacted.
 
