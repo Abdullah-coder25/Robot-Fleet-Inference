@@ -177,7 +177,7 @@ const POLICIES = [
   { id:"praxis-std", name:"Praxis-1 (Runway), shared standard tier", price:0.030, p99:270, perServer:16, gb:88, est:"",
     note:"Price from Reactor's docs. Reactor commits to a p99 under 270 ms on the standard tier and reports sixteen robots under a 250 ms p99 on one two-B200 server." },
   { id:"praxis-fast", name:"Praxis-1 factory tier, dedicated (one robot per server)", price:0.030, p99:64, perServer:1, gb:88, est:"price",
-    note:"Reactor reports 62 ms per call for one robot on two B200s (p99 64 ms) and a factory-tier target of an answer within 100 ms. Its price is not published, so $0.030 (the standard price) is a placeholder: card 4 shows what it would need to charge." },
+    note:"Custom pricing: Reactor has not published a factory-tier price, so $0.030 (the standard price) is only a placeholder; enter a quote if you have one, and card 4 shows what it would need to charge. Reactor reports 62 ms per call for one robot on two B200s (p99 64 ms) and a factory-tier target of an answer within 100 ms." },
   { id:"dreamzero", name:"DreamZero (NVIDIA)", price:0.204, p99:262, perServer:"derive", gb:null, est:"",
     note:"Price from Reactor's docs. Reactor reports about 243 ms median and 262 ms p95 on two B200s; no p99 is published, so the p95 stands in. Robots per server is not published: the default is the minimum Reactor's price implies at the GPU rent shown (enough robots for the price to cover the server). Weight size is not published." },
   { id:"cosmos", name:"Cosmos Nano Policy (NVIDIA)", price:0.102, p99:250, perServer:"derive", gb:null, est:"latency",
@@ -249,7 +249,7 @@ function render() {
   const perHour = price * 60;
   const monthly = perHour * robots * hours * days;
   $("perRobotHour").textContent = fmt$(perHour) + " / robot-hour";
-  $("billSub").textContent = `${robots} robots × ${hours} h × ${days} days = ${fmt$(monthly, 0)} per month, or ${fmt$(perHour*hours*days, 0)} per robot.`;
+  $("billSub").textContent = `${robots} robots × ${hours} h × ${days} days = ${fmt$(monthly, 0)} per month, or ${fmt$(perHour*hours*days, 0)} per robot.` + ($("policy").value === "praxis-fast" ? " Note: factory-tier pricing is custom and not published. This uses the $0.030 standard price as a placeholder; card 4 shows the price that would cover a dedicated server." : "");
 
   // 3. GPU cost
   const serverHour = gpuRate * gpus;
