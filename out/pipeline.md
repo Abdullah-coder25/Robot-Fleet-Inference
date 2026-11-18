@@ -22,7 +22,7 @@ Metros by number of targets: Bay Area (27), Boston (4), Austin (3), Seattle (1),
 | 16 | 61 | Chef Robotics | Operator | Bay Area | Rajat Bhageria, Founder & CEO | 100M+ servings in production; every deployment feeds its model |
 | 17 | 61 | Medra | Operator | Bay Area | Michelle Lee, Founder & CEO | $52M Series A (Dec 2025); 38,000 sq ft autonomous lab built in under 90 days (Apr 2026) |
 | 18 | 61 | Miru | Channel | Bay Area | Vedant Nair, Co-founder & COO | Its customers are the fleets Reactor wants; a Reactor endpoint could ship as a Miru-managed config; host of Scaling Robotics |
-| 19 | 59 | Walden Robotics | Model maker | Boston | Ben Burchfiel, Co-founder & CTO | $300M at $1.1B from Toyota, Nvidia, Boeing (Jul 15, 2026); robots already working in a Toyota plant |
+| 19 | 59 | Walden Robotics | Model maker | Boston | Russ Tedrake, Co-founder & CEO | $300M at $1.1B from Toyota, Nvidia, Boeing (Jul 15, 2026); robots already working in a Toyota plant |
 | 20 | 57 | Ai2 (MolmoAct 2) | Model maker | Seattle | Ranjay Krishna, Research lead, computer vision (MolmoAct) | 400K+ downloads since May 5; base model takes ~450 ms per action call, so faster hosting changes what it can do |
 | 21 | 57 | Feather Robotics | Channel | Bay Area | Hoa Mai, Co-founder & CEO | $7.6M pre-seed and launch (Sep 24, 2026); ships with no model of its own, so each unit needs a policy from somewhere |
 | 22 | 57 | Robotics Center of Silicon Valley | Channel | Bay Area | Jerry Huang, Founder | Every eval it runs needs a policy served somewhere |
