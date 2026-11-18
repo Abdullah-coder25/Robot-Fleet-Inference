@@ -1,6 +1,6 @@
 # robot-fleet-inference
 
-A small toolkit for selling remote policy inference to robot fleets, built from public information about [Reactor](https://www.reactor.inc/robotics)'s Remote Policy API.
+A calculator plus 48 scored robotics leads for selling remote policy inference to robot fleets, built from public information about [Reactor](https://www.reactor.inc/robotics)'s Remote Policy API. Each lead has a first-call contact, work email, why-now reason and two sources; the ranked list is in [`out/ranked.csv`](out/ranked.csv).
 
 **Live calculator:** https://abdullah-coder25.github.io/Robot-Fleet-Inference/calculator/
 
