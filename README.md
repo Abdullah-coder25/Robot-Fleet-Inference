@@ -9,7 +9,7 @@ It has three parts:
 | Part | What it does |
 |---|---|
 | [`calculator/`](calculator/index.html) | "Can this robot run from the cloud?" Pick a hosted policy, a task and a fleet. It checks the task's latency budget against the network round trip plus the model's p99, prices the fleet per robot-hour, and shows how full a GPU server has to be before the price covers the GPUs. |
-| [`data/accounts.csv`](data/accounts.csv) | Forty net-new robotics accounts, none already partnered with Reactor (operators, model makers, channels, data fleets), each with the signals used for scoring, a suggested first call, the first call's work email and two public sources. |
+| [`data/accounts.csv`](data/accounts.csv) | Forty-four net-new robotics accounts, none already partnered with Reactor (operators, model makers, channels, data fleets), each with the signals used for scoring, a suggested first call, the first call's work email and two public sources. |
 | [`score.py`](score.py) | Scores and ranks the accounts, then writes `out/ranked.csv` and `out/pipeline.md`. Change the weights from the command line to disagree with them. |
 
 ## The idea behind it
