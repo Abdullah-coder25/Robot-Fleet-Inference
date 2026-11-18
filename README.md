@@ -2,6 +2,8 @@
 
 A small toolkit for selling remote policy inference to robot fleets, built from public information about [Reactor](https://www.reactor.inc/robotics)'s Remote Policy API.
 
+**Live calculator:** https://abdullah-coder25.github.io/Robot-Fleet-Inference/calculator/
+
 It has three parts:
 
 | Part | What it does |
