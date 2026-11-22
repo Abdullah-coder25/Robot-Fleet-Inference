@@ -6,11 +6,14 @@ A calculator plus 48 scored robotics leads for selling remote policy inference t
 
 **Live calculator:** https://abdullah-coder25.github.io/Robot-Fleet-Inference/calculator/
 
-It has four parts:
+**Evaluation calculator (Cosmos on Reactor vs real robots):** https://abdullah-coder25.github.io/Robot-Fleet-Inference/calculator/eval.html
+
+It has five parts:
 
 | Part | What it does |
 |---|---|
 | [`calculator/`](calculator/index.html) | "Can this robot run from the cloud?" Pick a hosted policy, a task and a fleet. It checks the task's latency budget against the network round trip plus the model's p99, prices the fleet per robot-hour, and shows how full a GPU server has to be before the price covers the GPUs. |
+| [`calculator/eval.html`](calculator/eval.html) | "Test in Cosmos first, or on real robots?" Enter an evaluation plan and compare the weekly cost, time and human hours of running every trial on real robots against screening in NVIDIA Cosmos on Reactor and confirming the best versions on hardware. |
 | [`data/accounts.csv`](data/accounts.csv) | The input: 48 net-new robotics accounts, none already partnered with Reactor (operators, model makers, channels, data fleets). Columns: Account, First call, Title, Connection Notes, Email, Segment, Metro, Why now, the six 0 to 3 signals (Offboard, Model match, Latency fit, Robot-hours, Warmth, Lock-in), Source 1 and Source 2. |
 | [`score.py`](score.py) | Works out Metro density, Score and Rank, then writes the two files in `out/`. Change the weights from the command line to disagree with them. |
 | [`out/`](out/) | The output. [`ranked.csv`](out/ranked.csv) is every account, ranked, with Rank, Score and Metro density added to the input columns. [`pipeline.md`](out/pipeline.md) is a shorter, readable version with the metro counts on top. |

@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Test in Cosmos first? A robot policy evaluation cost calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root { --ink:#16181D; --body:#2B2E35; --muted:#5F6368; --line:#D9DCE1; --soft:#F4F6F9; --accent:#1F5BD8; --real:#9AA0A8; --good:#13795B; --bad:#B42318; --warn:#9A6700; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:'IBM Plex Sans', system-ui, sans-serif; color:var(--ink); background:#fff; }
+  main { max-width: 1080px; margin: 0 auto; padding: 40px 24px 64px; }
+  header { border-bottom:1px solid var(--line); padding-bottom:16px; margin-bottom:24px; }
+  .eyebrow { font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+  h1 { font-family:'IBM Plex Sans Condensed', sans-serif; font-weight:600; font-size:32px; margin:6px 0 8px; }
+  .lead { color:var(--body); font-size:15px; line-height:1.55; max-width: 780px; margin:0; }
+  .nav { font-size:13px; margin-top:10px; }
+  .grid { display:grid; grid-template-columns: 360px 1fr; gap:28px; align-items:start; }
+  @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+  fieldset { border:1px solid var(--line); border-radius:8px; padding:14px 16px 16px; margin:0 0 16px; }
+  legend { font-weight:600; font-size:13px; padding:0 6px; }
+  label { display:block; font-size:12.5px; color:var(--muted); margin:10px 0 4px; }
+  input, select { width:100%; font:inherit; font-size:14px; padding:7px 9px; border:1px solid var(--line); border-radius:6px; color:var(--ink); background:#fff; }
+  input:focus, select:focus { outline:2px solid #C9D7F7; border-color:var(--accent); }
+  .row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .hint { font-size:11.5px; color:var(--muted); margin-top:4px; line-height:1.4; }
+  .tag { display:inline-block; font-size:10.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--warn); border:1px solid #E8D39A; background:#FFF8E6; border-radius:4px; padding:0 5px; margin-left:4px; vertical-align:1px; }
+  .cards { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:14px; }
+  @media (max-width: 560px) { .cards { grid-template-columns: 1fr; } }
+  .card { border:1px solid var(--line); border-radius:8px; padding:14px 16px; }
+  .card h3 { margin:0 0 8px; font-size:13px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; }
+  .big { font-family:'IBM Plex Sans Condensed', sans-serif; font-size:30px; font-weight:600; line-height:1.1; }
+  .sub { font-size:13px; color:var(--body); line-height:1.5; margin-top:6px; }
+  .good { color:var(--good); } .bad { color:var(--bad); } .warn { color:var(--warn); }
+  .wide { grid-column: 1 / -1; }
+  .bars { margin-top:8px; }
+  .brow { display:grid; grid-template-columns: 150px 1fr 90px; gap:10px; align-items:center; margin:8px 0; font-size:13px; }
+  .btrack { height:18px; background:var(--soft); border-radius:3px; position:relative; overflow:hidden; }
+  .bfill { position:absolute; left:0; top:0; bottom:0; border-radius:3px; }
+  .bval { text-align:right; font-family:'IBM Plex Mono', monospace; font-size:12.5px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; margin-top:6px; }
+  td, th { text-align:left; padding:6px 8px 6px 0; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { color:var(--muted); font-weight:500; font-size:12px; }
+  td.n, th.n { text-align:right; font-family:'IBM Plex Mono', monospace; font-size:12.5px; }
+  .note { border-left:3px solid var(--warn); background:#FFF8E6; padding:9px 12px; font-size:13px; line-height:1.5; color:var(--body); border-radius:0 6px 6px 0; margin-top:14px; }
+  details { margin-top:28px; border-top:1px solid var(--line); padding-top:14px; }
+  summary { cursor:pointer; font-weight:600; font-size:14px; }
+  .sources li { font-size:12.5px; color:var(--body); line-height:1.6; margin-bottom:4px; }
+  a { color:var(--accent); }
+  footer { margin-top:28px; font-size:12px; color:var(--muted); }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="eyebrow">Robot policy evaluation · built on Reactor's published Cosmos prices</div>
+  <h1>Test in Cosmos first, or on real robots?</h1>
+  <p class="lead">Describe how your team evaluates robot policies. The calculator compares running every trial on real robots against screening them first in NVIDIA Cosmos running live on Reactor, then confirming only the best versions on hardware. Defaults come from public sources listed at the bottom; anything not published is marked <span class="tag">assumption</span>. Change anything.</p>
+  <div class="nav"><a href="./">Companion calculator: can this robot run from the cloud?</a></div>
+</header>
+
+<div class="grid">
+<section>
+  <fieldset>
+    <legend>Your evaluation plan (per week)</legend>
+    <div class="row2">
+      <div><label for="versions">Policy versions tested</label><input id="versions" type="number" min="1" value="10"></div>
+      <div><label for="tasks">Tasks per version</label><input id="tasks" type="number" min="1" value="4"></div>
+    </div>
+    <div class="row2">
+      <div><label for="trials">Trials per task</label><input id="trials" type="number" min="1" value="50"></div>
+      <div><label for="epMin">Minutes per trial</label><input id="epMin" type="number" min="0.1" step="0.1" value="2"></div>
+    </div>
+    <div class="hint">50 trials per task and "a few minutes" per trial follow the AutoEval study (UC Berkeley). <span class="tag">assumption</span> for 10 versions and 4 tasks.</div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Real robots</legend>
+    <div class="row2">
+      <div><label for="robots">Robots available</label><input id="robots" type="number" min="1" value="4"></div>
+      <div><label for="robotHrs">Robot hours per day</label><input id="robotHrs" type="number" min="1" max="24" value="8"></div>
+    </div>
+    <div class="row2">
+      <div><label for="resetMin">Reset minutes per trial</label><input id="resetMin" type="number" min="0" step="0.1" value="1"></div>
+      <div><label for="robotsPerOp">Robots per operator</label><input id="robotsPerOp" type="number" min="1" value="1"></div>
+    </div>
+    <div class="row2">
+      <div><label for="wage">Operator wage, $/hour</label><input id="wage" type="number" min="0" step="0.01" value="35.53"></div>
+      <div><label for="robotCost">Robot cost, $/hour</label><input id="robotCost" type="number" min="0" step="0.5" value="0"></div>
+    </div>
+    <div class="hint">Wage: US median for electro-mechanical and mechatronics technicians (BLS 2025 data via O*NET), before benefits. Reset time: AutoEval's assumption. Robot cost (wear, depreciation, space) is 0 by default; add yours.</div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Cosmos on Reactor</legend>
+    <label for="model">Cosmos model</label>
+    <select id="model">
+      <option value="bimanual">Cosmos3 Nano Sim Bimanual (the world model is the simulator)</option>
+      <option value="transfer">Cosmos3 Nano Sim Transfer (photoreal video on top of your simulator)</option>
+    </select>
+    <div class="row2">
+      <div><label for="price">Price, $ per session-minute</label><input id="price" type="number" min="0" step="0.001" value="0.102"></div>
+      <div><label for="sessions">Sessions in parallel</label><input id="sessions" type="number" min="1" value="10"></div>
+    </div>
+    <div class="row2">
+      <div><label for="speed">Speed vs real time <span class="tag">assumption</span></label><input id="speed" type="number" min="0.1" step="0.1" value="1"></div>
+      <div><label for="setupMin">Setup minutes per trial <span class="tag">assumption</span></label><input id="setupMin" type="number" min="0" step="0.05" value="0.25"></div>
+    </div>
+    <div class="row2">
+      <div><label for="gradeMin">Grading minutes per trial <span class="tag">assumption</span></label><input id="gradeMin" type="number" min="0" step="0.1" value="0.5"></div>
+      <div><label for="policyPrice">Policy hosting, $/min</label><input id="policyPrice" type="number" min="0" step="0.001" value="0"></div>
+    </div>
+    <div class="hint" id="modelNote"></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Confirm on real robots</legend>
+    <label for="confirmPct">Share of trials re-run on real robots after screening, %</label>
+    <input id="confirmPct" type="number" min="0" max="100" step="1" value="10">
+    <div class="hint">Simulation is a filter, not a replacement. A common pattern: screen every version in simulation, then confirm the top few on hardware.</div>
+  </fieldset>
+</section>
+
+<section>
+  <div class="cards">
+    <div class="card wide">
+      <h3>Weekly cost</h3>
+      <div class="bars" id="costBars"></div>
+      <div class="sub" id="costLine"></div>
+    </div>
+    <div class="card">
+      <h3>Cost per trial</h3>
+      <div class="big" id="perTrial"></div>
+      <div class="sub" id="perTrialSub"></div>
+    </div>
+    <div class="card">
+      <h3>Time to finish a week of trials</h3>
+      <div class="big" id="wallBig"></div>
+      <div class="sub" id="wallSub"></div>
+    </div>
+    <div class="card">
+      <h3>Human hours per week</h3>
+      <div class="big" id="humanBig"></div>
+      <div class="sub" id="humanSub"></div>
+    </div>
+    <div class="card">
+      <h3>For Reactor</h3>
+      <div class="big" id="revBig"></div>
+      <div class="sub" id="revSub"></div>
+    </div>
+    <div class="card wide">
+      <h3>Breakdown</h3>
+      <table>
+        <thead><tr><th></th><th class="n">All real robots</th><th class="n">Cosmos only</th><th class="n">Cosmos + confirm</th></tr></thead>
+        <tbody id="breakdown"></tbody>
+      </table>
+      <div class="note" id="limits"></div>
+    </div>
+  </div>
+</section>
+</div>
+
+<details open>
+  <summary>Sources and assumptions</summary>
+  <ul class="sources">
+    <li><b>Cosmos prices and billing:</b> Cosmos3 Nano Sim Bimanual and Nano Sim Transfer are each $0.102 per minute of session time, metered per second while the GPU is reserved, including idle time between commands. <a href="https://docs.reactor.inc/robotics/cosmos/nano-sim-bimanual/overview">Bimanual docs</a>, <a href="https://docs.reactor.inc/robotics/cosmos/nano-sim-transfer/overview">Transfer docs</a>.</li>
+    <li><b>What each model does:</b> Bimanual generates video from arm poses and grips; it predicts visual evolution rather than running physics, so it gives no simulator state or task-success score, and the hosted checkpoint supports only the AgiBot embodiment. Transfer turns simulator depth frames into realistic video; the simulator still controls motion, physics and success criteria. Same two pages.</li>
+    <li><b>Real-robot evaluation effort:</b> the AutoEval study (Zhou et al., UC Berkeley) reports that evaluating OpenVLA took more than 2,500 rollouts and more than 100 hours of human labor, that each trial takes a few minutes, that it ran 50 rollouts per policy per task, and it assumes 1 minute per human reset. <a href="https://arxiv.org/abs/2503.24278">arXiv 2503.24278</a>.</li>
+    <li><b>Operator wage:</b> US median $35.53 per hour for electro-mechanical and mechatronics technologists and technicians, BLS 2025 wage data. <a href="https://www.onetonline.org/link/localwages/17-3024.00">O*NET</a>.</li>
+    <li><b>Assumptions, all editable:</b> 10 policy versions and 4 tasks per week; Cosmos runs at real-time speed (1x), since Reactor describes interactive frame rates but publishes no speed figure; 0.25 minutes of setup per simulated trial (load a start image and task text); 0.5 minutes for a person to grade each simulated clip (set 0 if you use an automatic success detector); one operator per robot; robot wear and depreciation left at $0; 10% of trials re-run on hardware. Policy hosting is $0 by default because many teams run their own policy; Reactor's hosted Praxis-1 is $0.030 per minute (<a href="https://docs.reactor.inc/robotics/overview">Reactor docs</a>).</li>
+    <li><b>Not modeled:</b> how well simulated results predict real ones for your task (measure this on a sample first), engineering time to set up either pipeline, and robot downtime.</li>
+  </ul>
+</details>
+
+<footer>Built by Abdullah Usman, November 2026, from public information. Not affiliated with Reactor or NVIDIA. Source: <a href="https://github.com/Abdullah-coder25/Robot-Fleet-Inference">github.com/Abdullah-coder25/Robot-Fleet-Inference</a>.</footer>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const num = id => { const v = parseFloat($(id).value); return isFinite(v) && v >= 0 ? v : 0; };
+const money = x => x >= 1000 ? '$' + Math.round(x).toLocaleString('en-US') : '$' + x.toFixed(2);
+const hrs = h => h >= 48 ? (h / 24).toFixed(1) + ' days' : h >= 1 ? h.toFixed(1) + ' h' : Math.round(h * 60) + ' min';
+
+const MODEL_NOTES = {
+  bimanual: 'The world model generates what the arms would see; it has no physics engine and returns no success score, so each clip needs grading. The hosted checkpoint supports the AgiBot embodiment only; other robots need a custom checkpoint.',
+  transfer: 'Your simulator still runs the physics and scores success; Cosmos makes its frames look real. Simulator compute is not included here. Set grading minutes to 0 if your simulator scores trials automatically.'
+};
+
+function calc() {
+  const trials = Math.max(1, Math.round(num('versions')) * Math.round(num('tasks')) * Math.round(num('trials')));
+  const ep = Math.max(0.1, num('epMin'));
+  const wage = num('wage');
+
+  // Real robots
+  const robots = Math.max(1, Math.round(num('robots')));
+  const robotHrs = Math.min(24, Math.max(1, num('robotHrs')));
+  const reset = num('resetMin');
+  const perOp = Math.max(1, num('robotsPerOp'));
+  const robotMin = ep + reset;                       // robot busy minutes per trial
+  const realLaborH = trials * robotMin / 60 / perOp;  // operator hours
+  const realRobotH = trials * robotMin / 60;
+  const realCost = realLaborH * wage + realRobotH * num('robotCost');
+  const realDays = realRobotH / (robots * robotHrs);  // working days of robot capacity
+
+  // Cosmos on Reactor
+  const speed = Math.max(0.1, num('speed'));
+  const sess = Math.max(1, Math.round(num('sessions')));
+  const sessMin = ep / speed + num('setupMin');      // billed minutes per trial
+  const gpuCost = trials * sessMin * num('price');
+  const polCost = trials * (ep / speed) * num('policyPrice');
+  const gradeH = trials * num('gradeMin') / 60;
+  const simCost = gpuCost + polCost + gradeH * wage;
+  const simWallH = trials * sessMin / 60 / sess;
+
+  // Hybrid: screen everything in Cosmos, confirm a share on real robots
+  const share = Math.min(100, num('confirmPct')) / 100;
+  const hybCost = simCost + realCost * share;
+  const hybHumanH = gradeH + realLaborH * share;
+
+  const realPer = realCost / trials, simPer = simCost / trials;
+
+  // Bars
+  const mx = Math.max(realCost, simCost, hybCost, 1);
+  const bar = (name, v, col) => `<div class="brow"><div>${name}</div><div class="btrack"><div class="bfill" style="width:${(100 * v / mx).toFixed(1)}%;background:${col}"></div></div><div class="bval">${money(v)}</div></div>`;
+  $('costBars').innerHTML = bar('All real robots', realCost, 'var(--real)') + bar('Cosmos only', simCost, 'var(--accent)') + bar(`Cosmos + ${Math.round(share * 100)}% confirm`, hybCost, '#5B86E5');
+  const save = realCost - hybCost;
+  $('costLine').innerHTML = save > 0
+    ? `Screening in Cosmos and confirming ${Math.round(share * 100)}% on hardware costs <b class="good">${money(save)} less per week</b> (${Math.round(100 * save / Math.max(realCost, 0.01))}% lower) for ${trials.toLocaleString('en-US')} trials.`
+    : `At these inputs, real robots cost less: Cosmos + confirm is <b class="warn">${money(-save)} more per week</b>. Lower the grading time, raise parallel sessions, or check the speed assumption.`;
+
+  $('perTrial').innerHTML = `${money(simPer)} <span style="font-size:16px;color:var(--muted)">vs ${money(realPer)}</span>`;
+  $('perTrialSub').textContent = `Cosmos trial (session time, grading${num('policyPrice') > 0 ? ', policy hosting' : ''}) vs a real-robot trial (operator time${num('robotCost') > 0 ? ', robot cost' : ''}).`;
+
+  $('wallBig').innerHTML = `${hrs(simWallH)} <span style="font-size:16px;color:var(--muted)">vs ${realDays.toFixed(1)} robot-days</span>`;
+  $('wallSub').textContent = `${sess} Cosmos sessions in parallel vs ${robots} robots at ${robotHrs} h a day.${realDays > 5 ? ' The real-robot plan does not fit in a 5-day week.' : ''}`;
+
+  $('humanBig').innerHTML = `${hybHumanH.toFixed(0)} h <span style="font-size:16px;color:var(--muted)">vs ${realLaborH.toFixed(0)} h</span>`;
+  $('humanSub').textContent = `Grading plus confirmation runs, vs running and resetting every trial by hand.`;
+
+  const revWeek = gpuCost + polCost;
+  $('revBig').textContent = money(revWeek * 52 / 12) + ' / month';
+  $('revSub').textContent = `What this one team would pay Reactor (Cosmos session time${num('policyPrice') > 0 ? ' plus policy hosting' : ''}), about ${Math.round(trials * sessMin).toLocaleString('en-US')} billed minutes a week.`;
+
+  const r = (k, a, b, c) => `<tr><td>${k}</td><td class="n">${a}</td><td class="n">${b}</td><td class="n">${c}</td></tr>`;
+  $('breakdown').innerHTML =
+    r('Trials run', trials.toLocaleString('en-US'), trials.toLocaleString('en-US'), `${trials.toLocaleString('en-US')} + ${Math.round(trials * share).toLocaleString('en-US')}`) +
+    r('Operator / grading hours', realLaborH.toFixed(1), gradeH.toFixed(1), hybHumanH.toFixed(1)) +
+    r('Robot hours', realRobotH.toFixed(1), '0', (realRobotH * share).toFixed(1)) +
+    r('Reactor session minutes', '0', Math.round(trials * sessMin).toLocaleString('en-US'), Math.round(trials * sessMin).toLocaleString('en-US')) +
+    r('Cost', money(realCost), money(simCost), money(hybCost));
+
+  $('modelNote').textContent = MODEL_NOTES[$('model').value];
+  $('limits').innerHTML = '<b>Read before trusting the gap.</b> ' + MODEL_NOTES[$('model').value] + ' Before relying on simulated scores, run the same versions on both and check that the rankings agree for your task.';
+}
+
+$('model').addEventListener('change', () => {
+  if ($('model').value === 'transfer') { $('gradeMin').value = 0; } else { $('gradeMin').value = 0.5; }
+  calc();
+});
+document.querySelectorAll('input').forEach(el => el.addEventListener('input', calc));
+calc();
+</script>
+</body>
+</html>
