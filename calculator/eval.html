@@ -169,7 +169,7 @@
     <li><b>Real-robot evaluation effort:</b> the AutoEval study (Zhou et al., UC Berkeley) reports that evaluating OpenVLA took more than 2,500 rollouts and more than 100 hours of human labor, that each trial takes a few minutes, that it ran 50 rollouts per policy per task, and it assumes 1 minute per human reset. <a href="https://arxiv.org/abs/2503.24278">arXiv 2503.24278</a>.</li>
     <li><b>Operator wage:</b> US median $35.53 per hour for electro-mechanical and mechatronics technologists and technicians, BLS 2025 wage data. <a href="https://www.onetonline.org/link/localwages/17-3024.00">O*NET</a>.</li>
     <li><b>Assumptions, all editable:</b> 10 policy versions and 4 tasks per week; Cosmos runs at real-time speed (1x), since Reactor describes interactive frame rates but publishes no speed figure; 0.25 minutes of setup per simulated trial (load a start image and task text); 0.5 minutes for a person to grade each simulated clip (set 0 if you use an automatic success detector); one operator per robot; robot wear and depreciation left at $0; 10% of trials re-run on hardware. Policy hosting is $0 by default because many teams run their own policy; Reactor's hosted Praxis-1 is $0.030 per minute (<a href="https://docs.reactor.inc/robotics/overview">Reactor docs</a>).</li>
-    <li><b>If your real-robot testing is already automated:</b> setups like AutoEval run trials, resets and scoring with almost no human (the study reports more than 99% less human supervision and about 500 trials per robot per day). For those teams, set robots per operator high (for example 20) and the labor gap mostly disappears; Cosmos still wins on speed, parallel sessions and robot wear. <a href="https://arxiv.org/abs/2503.24278">arXiv 2503.24278</a>.</li>
+    <li><b>If your real-robot testing is already automated:</b> setups like AutoEval run trials, resets and scoring with almost no human (the study reports more than 99% less human supervision and about 500 trials per robot per day). For those teams, set robots per operator high (for example 20). Real robots can then come out cheaper per trial; Cosmos's edge becomes speed, many sessions in parallel and no robot wear. <a href="https://arxiv.org/abs/2503.24278">arXiv 2503.24278</a>.</li>
     <li><b>Not modeled:</b> how well simulated results predict real ones for your task (measure this on a sample first), engineering time to set up either pipeline, and robot downtime.</li>
   </ul>
 </details>
@@ -252,7 +252,7 @@ function calc() {
     r('Cost', money(realCost), money(simCost), money(hybCost));
 
   $('modelNote').textContent = MODEL_NOTES[$('model').value];
-  $('limits').innerHTML = '<b>Read before trusting the gap.</b> ' + MODEL_NOTES[$('model').value] + ' Before relying on simulated scores, run the same versions on both and check that the rankings agree for your task. If your real-robot testing is already automated, raise robots per operator: the labor savings shrink, but the speed gain remains.';
+  $('limits').innerHTML = '<b>Read before trusting the gap.</b> ' + MODEL_NOTES[$('model').value] + ' Before relying on simulated scores, run the same versions on both and check that the rankings agree for your task. If your real-robot testing is already automated, raise robots per operator: real robots may then cost less, and the case for Cosmos rests on speed and scale.';
 }
 
 $('model').addEventListener('change', () => {
