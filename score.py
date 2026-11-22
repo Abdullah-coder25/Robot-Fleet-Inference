@@ -97,6 +97,39 @@ def write_outputs(ranked, counts):
     (out / "pipeline.md").write_text("\n".join(lines) + "\n")
 
 
+
+# Expansion segments (Nov 2026): robotics buyers opened up by NVIDIA Cosmos on
+# Reactor, plus generative media and gaming. Same 0-3 signals and the same
+# score formula as the lead sheet tabs; weights match each tab's footer.
+EXPANSION = {
+    "robotics_cosmos": {"World-model fit": 2.0, "Real-time need": 2.0, "Volume": 1.5,
+                        "Warmth": 1.0, "Lock-in": -1.5},
+    "gen_media": {"Real-time need": 2.0, "Own models": 2.0, "Scale": 1.5, "Infra pain": 1.5,
+                  "Warmth": 1.0, "Lock-in": -1.5},
+}
+EXPANSION["gaming"] = dict(EXPANSION["gen_media"])
+
+
+def score_expansion():
+    for name, weights in EXPANSION.items():
+        path = ROOT / "data" / f"{name}.csv"
+        if not path.exists():
+            continue
+        with open(path, newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            cols, rows = reader.fieldnames, list(reader)
+        max_score = sum(3 * w for w in weights.values() if w > 0)
+        for r in rows:
+            raw = sum(w * float(r[c] or 0) for c, w in weights.items())
+            r["Score"] = round_half_up(100 * raw / max_score)
+        rows.sort(key=lambda x: -x["Score"])
+        for r in rows:
+            r["Rank"] = 1 + sum(1 for o in rows if o["Score"] > r["Score"])
+        with open(ROOT / "out" / f"ranked_{name}.csv", "w", newline="", encoding="utf-8") as f:
+            w = csv.DictWriter(f, fieldnames=["Rank", "Score"] + cols)
+            w.writeheader()
+            w.writerows(rows)
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--weights", nargs="*", default=[],
@@ -113,6 +146,7 @@ def main():
         rows = list(csv.DictReader(f))
     ranked, counts = score(rows, weights)
     write_outputs(ranked, counts)
+    score_expansion()
     width = max(len(r["Account"]) for r in ranked)
     for r in ranked:
         print(f"{r['Rank']:>2}  {r['Score']:>3}  {r['Account']:<{width}}  {r['Metro']}")
