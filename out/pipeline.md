@@ -42,8 +42,8 @@ Metros by number of targets: Bay Area (27), Austin (5), Boston (4), Pittsburgh (
 | 36 | 50 | Formic | Saman Farid | Founder & CEO | Operator | Chicago | $50M (Oct 2026) to move from palletizing into general-purpose robots across 100+ factories; Oakland factory opened Aug 2026 |
 | 37 | 50 | GrayMatter Robotics | Brual Shah | Co-founder & CTO | Operator | Los Angeles | AI cells that scan, self-program and sand or polish new parts; AFWERX Phase II contract (Jan 2026) |
 | 38 | 48 | OSARO | Michael Kahane | CTO | Operator | Bay Area | SightWorks update (Oct 2026); SOC 2 Type II done (Aug 2026) |
-| 39 | 46 | Hello Robot | Aaron Edsinger | CEO & Co-founder | Channel | n/a | Labs bring their own policy; a hosted endpoint ships with every unit |
-| 40 | 44 | Argon Mechatronics | Lainey Corliss | Founder & CEO | Operator | Austin | Live deployments in Texas factories and pharma labs; precision work needs the dedicated tier, and no public sign yet of large models or off-robot inference. Local to Austin |
+| 39 | 48 | Argon Mechatronics | Lainey Corliss | Founder & CEO | Operator | Austin | Live deployments in Texas factories and pharma labs; precision work needs the dedicated tier, and no public sign yet of large models or off-robot inference. Local to Austin |
+| 40 | 46 | Hello Robot | Aaron Edsinger | CEO & Co-founder | Channel | n/a | Labs bring their own policy; a hosted endpoint ships with every unit |
 | 41 | 44 | Diligent Robotics | Andrea Thomaz | Founder & CEO | Operator | Austin | Moxi 2.0 rollout began (Aug 2026), up to 18 hours of runtime per robot per day |
 | 42 | 44 | Encord | James Falconer | Global Director of Business Development | Channel | Bay Area | $60M Series C (Feb 2026); 300+ AI teams as customers, a referral channel |
 | 43 | 44 | Rhoda AI | Alexander Bergman | CDO & VP Software, Founding Team | Model maker | Bay Area | $450M Series A (Mar 2026); expanding industrial pilots |
