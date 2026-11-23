@@ -103,7 +103,7 @@ def write_outputs(ranked, counts):
 # Expansion segments (Nov 2026): robotics buyers opened up by NVIDIA Cosmos on
 # Reactor, plus generative media and gaming. Same 0-3 signals and the same
 # score formula as the lead sheet tabs; weights match each tab's footer.
-# Ties share a rank here, like the RANK() formula in those tabs.
+# These tabs have no Rank column: rows are sorted by Score.
 EXPANSION = {
     "robotics_cosmos": {"World-model fit": 2.0, "Real-time need": 2.0, "Volume": 1.5,
                         "Warmth": 1.0, "Lock-in": -1.5},
@@ -125,11 +125,9 @@ def score_expansion():
         for r in rows:
             raw = sum(w * float(r[c] or 0) for c, w in weights.items())
             r["Score"] = round_half_up(100 * raw / max_score)
-        rows.sort(key=lambda x: -x["Score"])
-        for r in rows:
-            r["Rank"] = 1 + sum(1 for o in rows if o["Score"] > r["Score"])
+        rows.sort(key=lambda x: -x["Score"])  # stable: ties keep the sheet's order
         with open(ROOT / "out" / f"ranked_{name}.csv", "w", newline="", encoding="utf-8") as f:
-            w = csv.DictWriter(f, fieldnames=["Rank", "Score"] + cols)
+            w = csv.DictWriter(f, fieldnames=["Score"] + cols)
             w.writeheader()
             w.writerows(rows)
 
