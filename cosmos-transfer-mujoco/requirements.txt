@@ -1,6 +1,0 @@
-reactor-sdk==1.10.0
-mujoco>=3.2
-numpy
-pillow
-imageio
-imageio-ffmpeg

@@ -8,15 +8,12 @@ Two calculators plus 169 scored leads for Reactor: 48 robotics fleets for remote
 
 **Evaluation calculator (Cosmos on Reactor vs real robots):** https://abdullah-coder25.github.io/Robot-Fleet-Inference/calculator/eval.html
 
-**Integration example:** [MuJoCo + Cosmos Transfer on Reactor](cosmos-transfer-mujoco/), a closed-loop simulator integration with videos, measured latency and cost, and a partner quickstart.
-
-It has seven parts:
+It has six parts:
 
 | Part | What it does |
 |---|---|
 | [`calculator/`](calculator/index.html) | "Can this robot run from the cloud?" Pick a hosted policy, a task and a fleet. It checks the task's latency budget against the network round trip plus the model's p99, prices the fleet per robot-hour, and shows how full a GPU server has to be before the price covers the GPUs. |
 | [`calculator/eval.html`](calculator/eval.html) | "Test in Cosmos first, or on real robots?" Enter an evaluation plan and compare the weekly cost, time and human hours of running every trial on real robots against screening in NVIDIA Cosmos on Reactor and confirming the best versions on hardware. |
-| [`cosmos-transfer-mujoco/`](cosmos-transfer-mujoco/) | A working integration: MuJoCo running closed loop through NVIDIA Cosmos3 Nano Sim Transfer on Reactor, with side-by-side video, appearance variants, measured step time and cost, and a first-working-build checklist for partners. |
 | [`data/accounts.csv`](data/accounts.csv) | The input: 48 net-new robotics accounts, none already partnered with Reactor (operators, model makers, channels, data fleets). Columns match the Earlier Leads (11_18) tab of the lead sheet: Account, First call, Title, Connection Notes, Email, Segment, Metro, Why now, the seven 0 to 3 signals (Offboard, Model match, Latency fit, Robot-hours, Metro density, Warmth, Lock-in), Source 1 and Source 2. |
 | [`data/robotics_cosmos.csv`](data/robotics_cosmos.csv), [`data/gen_media.csv`](data/gen_media.csv), [`data/gaming.csv`](data/gaming.csv) | The expansion: 62 robotics accounts that can now use Cosmos on Reactor (foundation model teams, eval and simulation companies, data collection, labs, hardware makers, AV and surgical), 39 generative media accounts (video model labs, real-time avatars, creative apps, world-model labs) and 20 gaming accounts. Columns match their tab in the lead sheet: Account, Website, First call, Title, Email, Segment, Use case, Metro, Why now, the 0 to 3 signals and two sources; `score.py` scores them and sorts them into `out/ranked_<segment>.csv`, with a Score column and no Rank column, like the sheet. Companies Reactor already lists as customers, partners or hosted models are excluded. |
 | [`score.py`](score.py) | Works out Score (and Rank for the 48 earlier leads) with the same formulas as the sheet, then writes the files in `out/`. Change the weights from the command line to disagree with them. |
