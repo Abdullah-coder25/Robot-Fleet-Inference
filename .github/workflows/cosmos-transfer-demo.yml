@@ -55,7 +55,7 @@ jobs:
         if: success()
         run: |
           mkdir -p results
-          cp output/*.mp4 output/*.gif results/ 2>/dev/null || true
+          cp output/*.mp4 results/ 2>/dev/null || true
           cp output/variants.png results/ 2>/dev/null || true
           cp output/report.json results/report.json
           [ -f output/variants/report.json ] && cp output/variants/report.json results/variants_report.json || true
