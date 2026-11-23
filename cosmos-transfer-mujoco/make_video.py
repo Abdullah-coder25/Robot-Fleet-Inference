@@ -39,7 +39,7 @@ def load(folder: Path):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--output", type=Path, default=Path("output"))
+    ap.add_argument("--output", type=Path, default=Path("output/tabletop"), help="a run folder, e.g. output/agile")
     out = ap.parse_args().output
     sim, depth, cosmos = load(out / "sim_rgb"), load(out / "depth"), load(out / "cosmos_rgb")
     right, right_name = (cosmos, "Cosmos3 Nano Sim Transfer on Reactor") if cosmos else (depth, "Depth sent to Cosmos (dry run)")

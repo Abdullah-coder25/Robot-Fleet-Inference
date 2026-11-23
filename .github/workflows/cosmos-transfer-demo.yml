@@ -7,9 +7,12 @@ on:
         description: "Also render the three appearance variants (extra Reactor cost)"
         type: boolean
         default: true
+      scene:
+        description: "tabletop (Panda pick-and-place) or agile (FR3 assembly cell)"
+        default: "tabletop"
       frames:
-        description: "Frames for the main run (1 + 4N)"
-        default: "161"
+        description: "Frames for the main run (1 + 4N); blank = scene default"
+        default: ""
 
 permissions:
   contents: write
@@ -35,10 +38,10 @@ jobs:
       - name: Python packages
         run: pip install -q -r requirements.txt
       - name: Closed-loop run (MuJoCo -> Cosmos Transfer on Reactor)
-        run: python run_demo.py --frames ${{ inputs.frames }} --output output
+        run: python run_demo.py --scene ${{ inputs.scene }} ${{ inputs.frames && format('--frames {0}', inputs.frames) || '' }} --output output
       - name: Appearance variants
         if: ${{ inputs.variants }}
-        run: python run_demo.py --variants --output output
+        run: python run_demo.py --scene ${{ inputs.scene }} --variants --output output
       - name: Videos
         run: python make_video.py --output output
       - uses: actions/upload-artifact@v4
@@ -54,11 +57,11 @@ jobs:
       - name: Save results to the repo
         if: success()
         run: |
-          mkdir -p results
-          cp output/*.mp4 results/ 2>/dev/null || true
-          cp output/variants.png results/ 2>/dev/null || true
-          cp output/report.json results/report.json
-          [ -f output/variants/report.json ] && cp output/variants/report.json results/variants_report.json || true
+          mkdir -p results/${{ inputs.scene }}
+          cp output/*.mp4 results/${{ inputs.scene }}/ 2>/dev/null || true
+          cp output/variants.png results/${{ inputs.scene }}/ 2>/dev/null || true
+          cp output/report.json results/${{ inputs.scene }}/report.json
+          [ -f output/variants/report.json ] && cp output/variants/report.json results/${{ inputs.scene }}/variants_report.json || true
           python - <<'PY'
           from PIL import Image
           import glob
@@ -66,7 +69,7 @@ jobs:
               for kind in ["sim_rgb", "cosmos_rgb"]:
                   f = sorted(glob.glob(f"output/{kind}/*.png"))
                   if len(f) > i:
-                      Image.open(f[i]).save(f"results/{name}_{kind}.png")
+                      Image.open(f[i]).save(f"results/${{ inputs.scene }}/{name}_{kind}.png")
           PY
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

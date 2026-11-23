@@ -34,6 +34,26 @@ MAIN_PROMPT = (
     "light wooden table and places it on a blue plate. Realistic lighting, soft shadows, "
     "photorealistic camera footage."
 )
+# Agile Robots scene (FR3 + Franka Hand, assembly cell). Objects and colors are named in every
+# prompt so the model keeps them; only the conditions change between variants.
+AGILE_BASE = (
+    "a white Franka Research 3 robot arm with a white two-finger Franka Hand in a factory assembly "
+    "cell, picking small machined aluminum bushings from a black ESD parts tray and pressing them "
+    "into the sockets of a gray anodized steel fixture on a dark gray steel workbench, with an "
+    "aluminum profile frame behind the robot"
+)
+AGILE_PROMPT = f"Photorealistic camera footage of {AGILE_BASE}. Bright, even industrial LED lighting."
+AGILE_VARIANTS = {
+    "night_shift_low_light": f"Photorealistic camera footage of {AGILE_BASE}. Night shift: the cell is dim, "
+                             "lit by a single overhead lamp, with deep shadows across the workbench.",
+    "skylight_glare": f"Photorealistic camera footage of {AGILE_BASE}. Strong sunlight from a skylight causes "
+                      "bright glare and hard reflections on the metal parts and fixture.",
+    "cluttered_bench": f"Photorealistic camera footage of {AGILE_BASE}. A busy cell: cables, hand tools, "
+                       "cardboard packaging and spare parts are scattered around the edges of the workbench.",
+    "brass_parts_blue_fixture": f"Photorealistic camera footage of {AGILE_BASE.replace('aluminum bushings', 'brass bushings').replace('gray anodized steel fixture', 'blue anodized aluminum fixture')}. "
+                                "Bright industrial lighting.",
+}
+
 VARIANT_PROMPTS = {
     "warehouse": "An industrial robot arm on a steel workbench in a busy warehouse with shelving "
                  "and cardboard boxes in the background, overhead fluorescent lighting, realistic footage.",
@@ -127,8 +147,13 @@ def save(frames, folder: Path):
 
 
 async def closed_loop(args, out: Path):
-    sim = TabletopSim()
-    policy = PickAndPlacePolicy(sim, args.frames)
+    if args.scene == "agile":
+        from agile_sim import AgileCellSim, AssemblyPolicy
+        sim = AgileCellSim()
+        policy = AssemblyPolicy(sim, args.frames)
+    else:
+        sim = TabletopSim()
+        policy = PickAndPlacePolicy(sim, args.frames)
     sim_rgb, depth, cosmos, timings = [sim.render_rgb()], [sim.render_depth_png_array()], [], []
 
     async def run(cosmos_client):
@@ -169,7 +194,7 @@ async def closed_loop(args, out: Path):
         save(cosmos, out / "cosmos_rgb")
     report = {
         "frames": args.frames, "fps": FPS, "canvas": f"{WIDTH}x{HEIGHT}", "seed": args.seed,
-        "prompt": args.prompt, "dry_run": args.dry_run,
+        "scene": args.scene, "prompt": args.prompt, "dry_run": args.dry_run,
         "session_seconds": round(session, 1),
         "estimated_cost_usd": round(session / 60 * PRICE_PER_MIN, 3),
         "step_seconds_median": (sorted(t["seconds"] for t in timings[1:])[len(timings[1:]) // 2]
@@ -189,7 +214,8 @@ async def variants(args, out: Path):
         raise SystemExit("Run the main demo first (it records the depth frames).")
     depths = [np.asarray(Image.open(p).convert("RGB")) for p in paths]
     summary = {}
-    for name, prompt in VARIANT_PROMPTS.items():
+    prompts = AGILE_VARIANTS if args.scene == "agile" else VARIANT_PROMPTS
+    for name, prompt in prompts.items():
         frames = []
         async with CosmosTransfer() as c:
             first, _ = await c.initialize(depths[0], prompt, args.variant_frames, args.seed)
@@ -206,14 +232,24 @@ async def variants(args, out: Path):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--frames", type=int, default=161, help="1 + 4N, up to 597 (default 161 = 5.4 s)")
-    p.add_argument("--prompt", default=MAIN_PROMPT)
+    p.add_argument("--scene", choices=["tabletop", "agile"], default="tabletop",
+                   help="tabletop: Franka Panda pick-and-place; agile: FR3 + Franka Hand assembly cell")
+    p.add_argument("--frames", type=int, default=None, help="1 + 4N, up to 597 (default 161 tabletop, 281 agile)")
+    p.add_argument("--prompt", default=None)
     p.add_argument("--seed", type=int, default=7)
-    p.add_argument("--output", type=Path, default=Path("output"))
+    p.add_argument("--output", type=Path, default=None, help="default: output/<scene>")
     p.add_argument("--dry-run", action="store_true", help="no API calls; simulator and depth only")
     p.add_argument("--variants", action="store_true", help="render appearance variants from recorded depth")
-    p.add_argument("--variant-frames", type=int, default=61)
+    p.add_argument("--variant-frames", type=int, default=None, help="default 61 tabletop, 121 agile")
     args = p.parse_args()
+    if args.frames is None:
+        args.frames = 281 if args.scene == "agile" else 161
+    if args.prompt is None:
+        args.prompt = AGILE_PROMPT if args.scene == "agile" else MAIN_PROMPT
+    if args.output is None:
+        args.output = Path("output") / args.scene
+    if args.variant_frames is None:
+        args.variant_frames = 121 if args.scene == "agile" else 61
     if not (1 <= args.frames <= 597 and (args.frames - 1) % 4 == 0):
         raise SystemExit("--frames must be 1 + 4N and at most 597")
     args.output.mkdir(parents=True, exist_ok=True)

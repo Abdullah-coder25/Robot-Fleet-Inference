@@ -47,14 +47,17 @@ SCENE = """
 
 
 def setup_assets() -> Path:
-    """Fetch only the Franka Panda folder of MuJoCo Menagerie (sparse git clone)."""
-    if (PANDA_DIR / "panda.xml").exists():
+    """Fetch only the Franka folders of MuJoCo Menagerie (sparse git clone)."""
+    if (PANDA_DIR / "panda.xml").exists() and (ASSETS / "mujoco_menagerie" / "franka_fr3" / "fr3.xml").exists():
         return PANDA_DIR
     repo = ASSETS / "mujoco_menagerie"
     ASSETS.mkdir(exist_ok=True)
+    if (repo / ".git").exists():
+        subprocess.run(["git", "-C", str(repo), "sparse-checkout", "set", "franka_emika_panda", "franka_fr3"], check=True)
+        return PANDA_DIR
     subprocess.run(["git", "clone", "-q", "--depth", "1", "--filter=blob:none", "--sparse",
                     "https://github.com/google-deepmind/mujoco_menagerie", str(repo)], check=True)
-    subprocess.run(["git", "-C", str(repo), "sparse-checkout", "set", "franka_emika_panda"], check=True)
+    subprocess.run(["git", "-C", str(repo), "sparse-checkout", "set", "franka_emika_panda", "franka_fr3"], check=True)
     return PANDA_DIR
 
 
@@ -128,8 +131,9 @@ class TabletopSim:
         """Metric depth -> 8-bit RGB visualization (near = white, far = black), fixed bounds."""
         self.depth.update_scene(self.d, camera=self.cam)
         z = self.depth.render().astype(np.float64)  # meters
-        z[~np.isfinite(z) | (z <= 0)] = FAR
-        v = (FAR - np.clip(z, NEAR, FAR)) / (FAR - NEAR)
+        near, far = getattr(self, 'near', NEAR), getattr(self, 'far', FAR)
+        z[~np.isfinite(z) | (z <= 0)] = far
+        v = (far - np.clip(z, near, far)) / (far - near)
         g = np.round(v * 255).astype(np.uint8)
         return np.repeat(g[:, :, None], 3, axis=2)
 

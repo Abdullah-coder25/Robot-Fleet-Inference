@@ -46,14 +46,27 @@ Requires Python 3.11+ and a Reactor API key with access to `reactor/cosmos3-nano
 git clone https://github.com/Abdullah-coder25/Robot-Fleet-Inference
 cd Robot-Fleet-Inference/cosmos-transfer-mujoco
 pip install -r requirements.txt
-python run_demo.py --dry-run            # simulator + depth only, free; first run downloads the Franka model
+python run_demo.py --dry-run            # simulator + depth only, free; first run downloads the Franka models
 export REACTOR_API_KEY=rk_...           # keep keys out of code and client-side apps
 python run_demo.py                      # closed loop through Cosmos Transfer (~1 minute, ~$0.10)
 python run_demo.py --variants           # optional: three appearance prompts on the recorded depth
-python make_video.py                    # side_by_side.mp4, pipeline.mp4, variants.png
+python make_video.py --output output/tabletop   # side_by_side.mp4, pipeline.mp4, variants.png
 ```
 
 On a headless Linux server set `MUJOCO_GL=osmesa` (install `libosmesa6`). Or skip local setup: add `REACTOR_API_KEY` as a repository secret and run the **Cosmos Transfer + MuJoCo demo** workflow in GitHub Actions; it commits the videos to `results/`.
+
+## Scene 2: FR3 assembly cell (tailored to Agile Robots)
+
+A second scene swaps the toy pick-and-place for an industrial task on a current Agile Robots product: a **Franka Research 3** arm with a **Franka Hand** (both from MuJoCo Menagerie) picks two machined bushings from a parts tray and seats them in a two-socket fixture, inside a workbench cell with an aluminium-profile frame. Agile Robots has said it uses Cosmos 3 as a neural simulator to evaluate policies and stress-test edge cases, and plans to make Cosmos 3 available to its customers ([Agile Robots, Jun 2026](https://agile-robots.com/en/news/detail/simulating-worlds-agile-robots-early-access-to-nvidia-cosmos-3/)), so the variants here are edge-case conditions rather than decor: night-shift low light, skylight glare on metal, a cluttered bench, and different part and fixture materials. Every prompt names the parts and colors so only the condition changes.
+
+```bash
+python run_demo.py --scene agile --dry-run      # free check of the FR3 cell
+python run_demo.py --scene agile                # 281 frames (9.4 s of robot time), ~2 minutes of session, ~$0.15
+python run_demo.py --scene agile --variants     # 4 edge-case conditions x 121 frames, ~$0.25 in total
+python make_video.py --output output/agile
+```
+
+Cost estimates use the step time measured in scene 1; your own `report.json` records the actual session time and cost.
 
 ## Bring your own simulator: first-working-build checklist
 
@@ -73,6 +86,7 @@ On a headless Linux server set `MUJOCO_GL=osmesa` (install `libosmesa6`). Or ski
 
 ## Files
 
+- [`agile_sim.py`](agile_sim.py): the FR3 + Franka Hand assembly cell and its scripted assembly policy (scene 2).
 - [`sim.py`](sim.py): MuJoCo scene (Franka Panda from [MuJoCo Menagerie](https://github.com/google-deepmind/mujoco_menagerie), Apache-2.0, fetched on first run), scripted pick-and-place policy, depth export.
 - [`run_demo.py`](run_demo.py): the closed loop against Reactor, plus `--dry-run` and `--variants`.
 - [`make_video.py`](make_video.py): side-by-side video, GIF and variants grid.
