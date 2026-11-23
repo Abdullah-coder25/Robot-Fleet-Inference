@@ -34,10 +34,10 @@ DEFAULT_WEIGHTS = {
     "lockin": -1.5,       # policy served through another provider's API
 }
 
-# Column names match the lead sheet exactly.
+# Column names match the Earlier Leads (11_18) tab of the lead sheet exactly.
 INPUT_COLS = ["Account", "First call", "Title", "Connection Notes", "Email", "Segment", "Metro",
-              "Why now", "Offboard", "Model match", "Latency fit", "Robot-hours", "Warmth",
-              "Lock-in", "Source 1", "Source 2"]
+              "Why now", "Offboard", "Model match", "Latency fit", "Robot-hours", "Metro density",
+              "Warmth", "Lock-in", "Source 1", "Source 2"]
 OUTPUT_COLS = ["Rank", "Score", "Account", "First call", "Title", "Connection Notes", "Email",
                "Segment", "Metro", "Why now", "Offboard", "Model match", "Latency fit",
                "Robot-hours", "Metro density", "Warmth", "Lock-in", "Source 1", "Source 2"]
@@ -67,13 +67,15 @@ def score(rows, weights):
     ranked = []
     for r, d in zip(rows, dens):
         r = dict(r)
-        r["Metro density"] = d
+        # The sheet stores Metro density as a judgment call; compute it only if blank.
+        if str(r.get("Metro density", "")).strip() == "":
+            r["Metro density"] = d
         raw = sum(weights[k] * float(r[col]) for k, col in SIGNAL_COLS.items())
         r["Score"] = round_half_up(100 * raw / max_score)
         ranked.append(r)
     ranked.sort(key=lambda x: -x["Score"])  # stable: ties keep the input order
-    for r in ranked:  # ties share a rank, like the sheet's RANK()
-        r["Rank"] = 1 + sum(1 for o in ranked if o["Score"] > r["Score"])
+    for i, r in enumerate(ranked, 1):  # one rank per row, like the Earlier Leads tab
+        r["Rank"] = i
     return ranked, counts
 
 
@@ -101,6 +103,7 @@ def write_outputs(ranked, counts):
 # Expansion segments (Nov 2026): robotics buyers opened up by NVIDIA Cosmos on
 # Reactor, plus generative media and gaming. Same 0-3 signals and the same
 # score formula as the lead sheet tabs; weights match each tab's footer.
+# Ties share a rank here, like the RANK() formula in those tabs.
 EXPANSION = {
     "robotics_cosmos": {"World-model fit": 2.0, "Real-time need": 2.0, "Volume": 1.5,
                         "Warmth": 1.0, "Lock-in": -1.5},
