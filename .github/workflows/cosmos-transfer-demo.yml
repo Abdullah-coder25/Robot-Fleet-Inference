@@ -1,0 +1,50 @@
+name: Cosmos Transfer + MuJoCo demo
+
+on:
+  workflow_dispatch:
+    inputs:
+      variants:
+        description: "Also render the three appearance variants (extra Reactor cost)"
+        type: boolean
+        default: true
+      frames:
+        description: "Frames for the main run (1 + 4N)"
+        default: "161"
+
+jobs:
+  demo:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    env:
+      MUJOCO_GL: osmesa
+      PYOPENGL_PLATFORM: osmesa
+      REACTOR_API_KEY: ${{ secrets.REACTOR_API_KEY }}
+    defaults:
+      run:
+        working-directory: cosmos-transfer-mujoco
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: System packages for headless rendering
+        run: sudo apt-get update -q && sudo apt-get install -y -q libosmesa6 ffmpeg fonts-dejavu-core
+      - name: Python packages
+        run: pip install -q -r requirements.txt
+      - name: Closed-loop run (MuJoCo -> Cosmos Transfer on Reactor)
+        run: python run_demo.py --frames ${{ inputs.frames }} --output output
+      - name: Appearance variants
+        if: ${{ inputs.variants }}
+        run: python run_demo.py --variants --output output
+      - name: Videos
+        run: python make_video.py --output output
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cosmos-transfer-demo
+          path: |
+            cosmos-transfer-mujoco/output/*.mp4
+            cosmos-transfer-mujoco/output/*.gif
+            cosmos-transfer-mujoco/output/*.png
+            cosmos-transfer-mujoco/output/**/report.json
+            cosmos-transfer-mujoco/output/report.json
