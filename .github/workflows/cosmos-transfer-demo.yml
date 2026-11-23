@@ -11,6 +11,9 @@ on:
         description: "Frames for the main run (1 + 4N)"
         default: "161"
 
+permissions:
+  contents: write
+
 jobs:
   demo:
     runs-on: ubuntu-24.04
@@ -48,3 +51,25 @@ jobs:
             cosmos-transfer-mujoco/output/*.png
             cosmos-transfer-mujoco/output/**/report.json
             cosmos-transfer-mujoco/output/report.json
+      - name: Save results to the repo
+        if: success()
+        run: |
+          mkdir -p results
+          cp output/*.mp4 output/*.gif results/ 2>/dev/null || true
+          cp output/variants.png results/ 2>/dev/null || true
+          cp output/report.json results/report.json
+          [ -f output/variants/report.json ] && cp output/variants/report.json results/variants_report.json || true
+          python - <<'PY'
+          from PIL import Image
+          import glob
+          for i, name in [(40, "frame_early"), (100, "frame_mid"), (150, "frame_late")]:
+              for kind in ["sim_rgb", "cosmos_rgb"]:
+                  f = sorted(glob.glob(f"output/{kind}/*.png"))
+                  if len(f) > i:
+                      Image.open(f[i]).save(f"results/{name}_{kind}.png")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results
+          git commit -m "Cosmos Transfer demo results (run ${{ github.run_id }})" || exit 0
+          git pull --rebase -q && git push
