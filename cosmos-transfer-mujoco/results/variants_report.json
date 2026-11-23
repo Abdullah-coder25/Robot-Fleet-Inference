@@ -1,0 +1,17 @@
+{
+  "warehouse": {
+    "prompt": "An industrial robot arm on a steel workbench in a busy warehouse with shelving and cardboard boxes in the background, overhead fluorescent lighting, realistic footage.",
+    "session_seconds": 18.7,
+    "estimated_cost_usd": 0.032
+  },
+  "kitchen": {
+    "prompt": "A robot arm on a marble kitchen counter next to a window with morning sunlight, a red cube and a blue plate on the counter, realistic home footage.",
+    "session_seconds": 16.2,
+    "estimated_cost_usd": 0.028
+  },
+  "lab_night": {
+    "prompt": "A robot arm in a dim research lab at night, lit by cool blue monitor light, a red cube and a blue plate on a dark table, realistic footage.",
+    "session_seconds": 16.9,
+    "estimated_cost_usd": 0.029
+  }
+}
