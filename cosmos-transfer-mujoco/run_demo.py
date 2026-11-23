@@ -37,10 +37,10 @@ MAIN_PROMPT = (
 # Agile Robots scene (FR3 + Franka Hand, assembly cell). Objects and colors are named in every
 # prompt so the model keeps them; only the conditions change between variants.
 AGILE_BASE = (
-    "a white Franka Research 3 robot arm with a white two-finger Franka Hand in a factory assembly "
-    "cell, picking small machined aluminum bushings from a black ESD parts tray and pressing them "
-    "into the sockets of a gray anodized steel fixture on a dark gray steel workbench, with an "
-    "aluminum profile frame behind the robot"
+    "a white Franka Research 3 robot arm with a white two-finger Franka Hand at a factory assembly "
+    "cell, moving cylindrical machined aluminum parts one at a time into the sockets of a gray "
+    "anodized steel fixture; a black ESD tray sits on the dark gray steel workbench and an aluminum "
+    "profile frame stands behind the robot. The part held by the gripper moves with the gripper"
 )
 AGILE_PROMPT = f"Photorealistic camera footage of {AGILE_BASE}. Bright, even industrial LED lighting."
 AGILE_VARIANTS = {
@@ -50,7 +50,7 @@ AGILE_VARIANTS = {
                       "bright glare and hard reflections on the metal parts and fixture.",
     "cluttered_bench": f"Photorealistic camera footage of {AGILE_BASE}. A busy cell: cables, hand tools, "
                        "cardboard packaging and spare parts are scattered around the edges of the workbench.",
-    "brass_parts_blue_fixture": f"Photorealistic camera footage of {AGILE_BASE.replace('aluminum bushings', 'brass bushings').replace('gray anodized steel fixture', 'blue anodized aluminum fixture')}. "
+    "brass_parts_blue_fixture": f"Photorealistic camera footage of {AGILE_BASE.replace('machined aluminum parts', 'machined brass parts').replace('gray anodized steel fixture', 'blue anodized aluminum fixture')}. "
                                 "Bright industrial lighting.",
 }
 

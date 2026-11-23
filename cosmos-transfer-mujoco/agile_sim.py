@@ -15,13 +15,13 @@ FR3_DIR = ASSETS / "mujoco_menagerie" / "franka_fr3"
 HAND_XML = ASSETS / "mujoco_menagerie" / "franka_emika_panda" / "hand.xml"
 
 BENCH_TOP = 0.40
-PARTS = [(0.47, -0.22), (0.53, -0.22)]       # bushings in the tray
-SOCKETS = [(0.51, 0.17), (0.59, 0.17)]       # sockets in the fixture
-PART_R, PART_H = 0.018, 0.022                # bushing radius, half-height
+PARTS = [(0.46, -0.21), (0.55, -0.21)]       # parts in the tray
+SOCKETS = [(0.47, 0.15), (0.57, 0.15)]       # sockets in the fixture
+PART_R, PART_H = 0.024, 0.032                # part radius, half-height (large enough to read clearly in depth)
 FIX_TOP = BENCH_TOP + 0.03                   # top of the fixture base plate
 
 
-def _socket_walls(cx, cy, inner=0.024, t=0.006, h=0.014):
+def _socket_walls(cx, cy, inner=0.031, t=0.007, h=0.016):
     z = FIX_TOP + h
     walls = []
     for dx, dy, sx, sy in [(inner + t, 0, t, inner + 2 * t), (-(inner + t), 0, t, inner + 2 * t),
@@ -38,7 +38,7 @@ SCENE = f"""
     <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3"/>
   </visual>
   <worldbody>
-    <light pos="0.4 0 2.5" dir="0 0 -1" directional="true"/>
+    <light pos="0.4 0 2.5" dir="0 0 -1" directional="true" castshadow="false"/>
     <geom name="floor" type="plane" size="3 3 0.1" rgba="0.5 0.5 0.52 1"/>
     <!-- robot pedestal -->
     <geom type="cylinder" pos="0 0 -0.001" size="0.11 0.001" rgba="0.3 0.3 0.3 1"/>
@@ -49,25 +49,25 @@ SCENE = f"""
     <geom type="box" pos="-0.30 0 1.18" size="0.02 0.47 0.02" rgba="0.7 0.7 0.72 1"/>
     <geom type="box" pos="-0.30 0 0.62" size="0.02 0.47 0.015" rgba="0.7 0.7 0.72 1"/>
     <!-- parts tray -->
-    <geom type="box" pos="0.50 -0.22 {BENCH_TOP + 0.004:.3f}" size="0.07 0.06 0.004" rgba="0.1 0.1 0.12 1"/>
-    <geom type="box" pos="0.50 -0.28 {BENCH_TOP + 0.015:.3f}" size="0.07 0.004 0.011" rgba="0.1 0.1 0.12 1"/>
-    <geom type="box" pos="0.50 -0.16 {BENCH_TOP + 0.015:.3f}" size="0.07 0.004 0.011" rgba="0.1 0.1 0.12 1"/>
-    <geom type="box" pos="0.43 -0.22 {BENCH_TOP + 0.015:.3f}" size="0.004 0.06 0.011" rgba="0.1 0.1 0.12 1"/>
-    <geom type="box" pos="0.57 -0.22 {BENCH_TOP + 0.015:.3f}" size="0.004 0.06 0.011" rgba="0.1 0.1 0.12 1"/>
+    <geom type="box" pos="0.505 -0.21 {BENCH_TOP + 0.004:.3f}" size="0.095 0.065 0.004" rgba="0.1 0.1 0.12 1"/>
+    <geom type="box" pos="0.505 -0.275 {BENCH_TOP + 0.015:.3f}" size="0.095 0.005 0.011" rgba="0.1 0.1 0.12 1"/>
+    <geom type="box" pos="0.505 -0.145 {BENCH_TOP + 0.015:.3f}" size="0.095 0.005 0.011" rgba="0.1 0.1 0.12 1"/>
+    <geom type="box" pos="0.41 -0.21 {BENCH_TOP + 0.015:.3f}" size="0.005 0.065 0.011" rgba="0.1 0.1 0.12 1"/>
+    <geom type="box" pos="0.60 -0.21 {BENCH_TOP + 0.015:.3f}" size="0.005 0.065 0.011" rgba="0.1 0.1 0.12 1"/>
     <!-- fixture plate with two sockets -->
-    <geom type="box" pos="0.55 0.17 {BENCH_TOP + 0.015:.3f}" size="0.10 0.06 0.015" rgba="0.45 0.47 0.5 1"/>
+    <geom type="box" pos="0.52 0.15 {BENCH_TOP + 0.015:.3f}" size="0.11 0.065 0.015" rgba="0.45 0.47 0.5 1"/>
       {_socket_walls(*SOCKETS[0])}
       {_socket_walls(*SOCKETS[1])}
     <!-- two machined bushings -->
     <body name="part1" pos="{PARTS[0][0]} {PARTS[0][1]} {BENCH_TOP + 0.008 + PART_H:.3f}">
       <freejoint/>
-      <geom type="cylinder" size="{PART_R} {PART_H}" rgba="0.75 0.76 0.78 1" mass="0.04" friction="1.5 0.05 0.01"/>
+      <geom type="cylinder" size="{PART_R} {PART_H}" rgba="0.75 0.76 0.78 1" mass="0.06" friction="1.5 0.05 0.01"/>
     </body>
     <body name="part2" pos="{PARTS[1][0]} {PARTS[1][1]} {BENCH_TOP + 0.008 + PART_H:.3f}">
       <freejoint/>
-      <geom type="cylinder" size="{PART_R} {PART_H}" rgba="0.75 0.76 0.78 1" mass="0.04" friction="1.5 0.05 0.01"/>
+      <geom type="cylinder" size="{PART_R} {PART_H}" rgba="0.75 0.76 0.78 1" mass="0.06" friction="1.5 0.05 0.01"/>
     </body>
-    <camera name="front" pos="1.15 -0.45 1.05" xyaxes="0.569 0.822 -0.000 -0.458 0.317 0.831" fovy="52"/>
+    <camera name="front" pos="1.08 -0.42 1.0" xyaxes="0.568 0.823 -0.000 -0.457 0.315 0.832" fovy="58"/>
   </worldbody>
 </mujoco>
 """
@@ -86,6 +86,7 @@ class AgileCellSim(TabletopSim):
         for k in list(spec.keys):          # the FR3 keyframe predates the hand and parts
             spec.delete(k)
         self.m = spec.compile()
+        self.m.site_rgba[:, 3] = 0          # hide helper sites from the camera
         self.d = mujoco.MjData(self.m)
         home = [0, 0, 0, -1.57079, 0, 1.57079, -0.7853]
         self.arm_qpos_adr = [self.m.jnt_qposadr[self.m.joint(f"fr3_joint{i}").id] for i in range(1, 8)]
@@ -102,7 +103,7 @@ class AgileCellSim(TabletopSim):
         self.depth = mujoco.Renderer(self.m, HEIGHT, WIDTH)
         self.depth.enable_depth_rendering()
         self.cam = self.m.camera("front").id
-        self.near, self.far = 0.45, 1.6   # fixed for the whole episode
+        self.near, self.far = 0.4, 1.35   # fixed for the whole episode
         from sim import FPS
         self.substeps = int(round(1.0 / FPS / self.m.opt.timestep))
         # settle the parts in the tray before the episode starts
@@ -126,7 +127,7 @@ class AssemblyPolicy:
         plan = []
         for i, (sx, sy) in enumerate(SOCKETS):
             p = sim.part_pos(i)
-            grip = p + [0, 0, 0.004]
+            grip = p + [0, 0, 0.008]
             seat = np.array([sx, sy, FIX_TOP + PART_H + 0.006])
             plan += [
                 (grip + [0, 0, hover], True, 0.10),
